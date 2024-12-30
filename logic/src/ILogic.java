@@ -1,7 +1,7 @@
 public interface ILogic {
     void distributeCoin();
-    void playCoins();
-    APlayer checkForHighestPlayedCoins();
+     void playCoin(APlayer player, ACoin coin) ;
+    APlayer checkForHighestPlayedCoins() throws Exception;
     void chooseCoin();
     void checkEndGameCondition();
     void checkWinningPlayer();

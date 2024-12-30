@@ -1,11 +1,11 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import util.Pair;
+
+import java.util.*;
 
 public class Logic implements ILogic {
     private List<APlayer> players;
     private List<ACoin> coins;
-    private List<ACoin> playedCoins;
+    private List<Pair<APlayer, ACoin> >playedCoins;
     private APlayer roundWinner;
     private boolean isGameFinished = false;
     private final int amountPlayers = 3;
@@ -50,24 +50,30 @@ public class Logic implements ILogic {
                     .limit(2)
                     .toList();
             p.addCoinsOnHand(redCoins);
-            playedCoins.addAll(redCoins);
+            //playedCoins.addAll(redCoins);
             List<ACoin> blueCoins = coins.stream()
                     .filter(f -> f.getColor() == ACoin.CoinColors.blue)
                     .limit(2)
                     .toList();
             p.addCoinsOnHand(blueCoins);
-            playedCoins.addAll(blueCoins);
+           // playedCoins.addAll(blueCoins);
         }
     }
 
     @Override
-    public void playCoins() {
-
+    public void playCoin(APlayer player, ACoin coin) {
+    playedCoins.add(new Pair<>(player, coin));
     }
 
     @Override
-    public APlayer checkForHighestPlayedCoins() {
-        return null;
+    public APlayer checkForHighestPlayedCoins() throws Exception {
+
+        Optional<Pair<APlayer, ACoin>> maxCoin =playedCoins.stream()
+                .max(Comparator.comparingInt(pair -> pair.getSecond().getNumber()));
+       if( maxCoin.isPresent()){
+           throw new Exception("No max coin");
+       }
+       return maxCoin.get().getFirst();
     }
 
     @Override
