@@ -1,10 +1,11 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Logic implements ILogic {
     private List<APlayer> players;
-    private List<Coin> coins;
-    private List<Coin> playedCoins;
+    private List<ACoin> coins;
+    private List<ACoin> playedCoins;
     private APlayer roundWinner;
     private boolean isGameFinished = false;
     private final int amountPlayers = 3;
@@ -24,12 +25,19 @@ public class Logic implements ILogic {
         }
     }
     void createCoins() {
+        List<Integer> availableNumbersRed = Arrays.asList(4,5,6,7,8,9,9,4);
+        List<Integer> availableNumbersBlue = Arrays.asList(1,2,3,10,11,12,10,3);
+        ACoinFactory redCoinFactory = new RedCoinFactory();
+        ACoinFactory blueCoinFactory = new BlueCoinFactory();
+
+        redCoinFactory.setAvailableNumbers(availableNumbersRed);
+        blueCoinFactory.setAvailableNumbers(availableNumbersBlue);
+
         amountCoins = amountPlayers*4;
+
         for (int i = 0; i < amountCoins/2; i++) {
-            coins.add(new Coin(Coin.CoinColors.red));
-        }
-        for (int i = 0; i < amountCoins/2; i++) {
-            coins.add(new Coin(Coin.CoinColors.blue));
+            coins.add(redCoinFactory.createCoin());
+            coins.add(blueCoinFactory.createCoin());
         }
     }
 
@@ -37,14 +45,14 @@ public class Logic implements ILogic {
     @Override
     public void distributeCoin() {
         for(APlayer p: players) {
-            List<Coin> redCoins = coins.stream()
-                    .filter(f -> f.getColor() == Coin.CoinColors.red)
+            List<ACoin> redCoins = coins.stream()
+                    .filter(f -> f.getColor() == ACoin.CoinColors.red)
                     .limit(2)
                     .toList();
             p.addCoinsOnHand(redCoins);
             playedCoins.addAll(redCoins);
-            List<Coin> blueCoins = coins.stream()
-                    .filter(f -> f.getColor() == Coin.CoinColors.blue)
+            List<ACoin> blueCoins = coins.stream()
+                    .filter(f -> f.getColor() == ACoin.CoinColors.blue)
                     .limit(2)
                     .toList();
             p.addCoinsOnHand(blueCoins);

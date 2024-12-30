@@ -1,6 +1,6 @@
-public class Coin {
+public abstract class ACoin {
     // This is a placeholder
-    public Coin(CoinColors coinColors) {
+    public ACoin(CoinColors coinColors, int number) {
     }
 
     // This is a placeholder
