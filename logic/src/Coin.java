@@ -3,7 +3,7 @@ import java.util.List;
 
 public class Coin {
     private final int number;       // Numerical value of the coin (fixed).
-    private final coinColors color; // Color of the coin (red or blue).
+    private final coinColors color; // Color of the coin (RED or BLUE).
     private int owner;              // Current owner of the coin (-1 if unowned).
 
     // Constructor
@@ -23,6 +23,10 @@ public class Coin {
 
     public coinColors getColor() {
         return color; // Return the color of the coin.
+    }
+
+    public int getValue() {
+        return number; // Alias for getNumber(), used by NPC and Player classes.
     }
 
     public int getOwner() {
@@ -52,25 +56,25 @@ public class Coin {
         List<Coin> coins = new ArrayList<>();
 
         // Standard Chips (1-12)
-        coins.add(new Coin(1, coinColors.blue));
-        coins.add(new Coin(2, coinColors.blue));
-        coins.add(new Coin(3, coinColors.blue));
-        coins.add(new Coin(4, coinColors.red));
-        coins.add(new Coin(5, coinColors.red));
-        coins.add(new Coin(6, coinColors.red));
-        coins.add(new Coin(7, coinColors.red));
-        coins.add(new Coin(8, coinColors.red));
-        coins.add(new Coin(9, coinColors.red));
-        coins.add(new Coin(10, coinColors.blue));
-        coins.add(new Coin(11, coinColors.blue));
-        coins.add(new Coin(12, coinColors.blue));
+        coins.add(new Coin(1, coinColors.BLUE));
+        coins.add(new Coin(2, coinColors.BLUE));
+        coins.add(new Coin(3, coinColors.BLUE));
+        coins.add(new Coin(4, coinColors.RED));
+        coins.add(new Coin(5, coinColors.RED));
+        coins.add(new Coin(6, coinColors.RED));
+        coins.add(new Coin(7, coinColors.RED));
+        coins.add(new Coin(8, coinColors.RED));
+        coins.add(new Coin(9, coinColors.RED));
+        coins.add(new Coin(10, coinColors.BLUE));
+        coins.add(new Coin(11, coinColors.BLUE));
+        coins.add(new Coin(12, coinColors.BLUE));
 
         // Extra Chips for 4 Players
         if (numberOfPlayers == 4) {
-            coins.add(new Coin(3, coinColors.blue));  // Extra Blue Chip 3
-            coins.add(new Coin(4, coinColors.red));  // Extra Red Chip 4
-            coins.add(new Coin(9, coinColors.red));  // Extra Red Chip 9
-            coins.add(new Coin(10, coinColors.blue)); // Extra Blue Chip 10
+            coins.add(new Coin(3, coinColors.BLUE));  // Extra BLUE Chip 3
+            coins.add(new Coin(4, coinColors.RED));  // Extra RED Chip 4
+            coins.add(new Coin(9, coinColors.RED));  // Extra RED Chip 9
+            coins.add(new Coin(10, coinColors.BLUE)); // Extra BLUE Chip 10
         }
 
         return coins;
