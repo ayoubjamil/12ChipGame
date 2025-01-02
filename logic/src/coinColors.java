@@ -1,4 +1,4 @@
 public enum coinColors {
-    red,    // Represents red coin
-    blue    // Represent blue coin
+    RED,    // Represents red coin
+    BLUE    // Represent blue coin
 }
