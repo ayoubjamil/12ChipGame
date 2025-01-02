@@ -1,3 +1,5 @@
+package com.frauas.javaproject.twelvechipgame.temp;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +54,7 @@ public class Coin {
         List<Coin> coins = new ArrayList<>();
 
         // Standard Chips (1-12)
-        coins.add(new Coin(1, coinColors.blue));
+    /*    coins.add(new Coin(1, coinColors.blue));
         coins.add(new Coin(2, coinColors.blue));
         coins.add(new Coin(3, coinColors.blue));
         coins.add(new Coin(4, coinColors.red));
@@ -72,7 +74,7 @@ public class Coin {
             coins.add(new Coin(9, coinColors.red));  // Extra Red Chip 9
             coins.add(new Coin(10, coinColors.blue)); // Extra Blue Chip 10
         }
-
+*/
         return coins;
     }
 }
