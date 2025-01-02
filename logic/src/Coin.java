@@ -1,93 +1,78 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
-    private final int playerNumber;           // Unique identifier for the player (constant).
-    private List<Coin> coinsOnHand;           // Coins the player currently holds.
-    private List<Coin> fieldOfWonCoins;       // Coins the player has won.
+public class Coin {
+    private final int number;       // Numerical value of the coin (fixed).
+    private final coinColors color; // Color of the coin (red or blue).
+    private int owner;              // Current owner of the coin (-1 if unowned).
 
     // Constructor
-    public Player(int playerNumber) {
-        this.playerNumber = playerNumber;     // Assign the unique player number.
-        this.coinsOnHand = new ArrayList<>(); // Initialize an empty hand.
-        this.fieldOfWonCoins = new ArrayList<>(); // Initialize an empty won pile.
-    }
-
-    // Get Player Number
-    public int getPlayerNumber() {
-        return playerNumber; // Return the player's unique number.
-    }
-
-    // Play a Coin
-    public Coin playCoin() {
-        if (coinsOnHand.isEmpty()) {
-            throw new IllegalStateException("No coins left to play!"); // Error if no coins available.
+    public Coin(int number, coinColors color) {
+        if (number < 1 || number > 16) {  // Ensure the number is within a valid range.
+            throw new IllegalArgumentException("Coin number must be between 1 and 16.");
         }
-        return coinsOnHand.remove(0); // Remove and return the first coin in the list.
+        this.number = number;
+        this.color = color;
+        this.owner = -1; // Default: unowned at initialization.
     }
 
-    // Add a Coin to the Player's Hand
-    public void takeCoin(Coin coin) {
-        coinsOnHand.add(coin); // Add the coin to the player's hand.
+    // Getters
+    public int getNumber() {
+        return number; // Return the numerical value of the coin.
     }
 
-    // Check if the player has no coins left
-    public boolean hasNoCoinsLeft() {
-        return coinsOnHand.isEmpty(); // Return true if no coins are left in hand.
+    public coinColors getColor() {
+        return color; // Return the color of the coin.
     }
 
-    // Choose a Coin (red first, then blue if no red is available)
-    public Coin chooseCoin(List<Coin> availableCoins) {
-        Coin selectedCoin = null;
-        // Prioritize red coins
-        for (Coin coin : availableCoins) {
-            if (coin.getColor() == coinColors.red) {
-                selectedCoin = coin;
-                break;
-            }
-        }
-        // If no red coin, choose a blue coin
-        if (selectedCoin == null) {
-            for (Coin coin : availableCoins) {
-                if (coin.getColor() == coinColors.blue) {
-                    selectedCoin = coin;
-                    break;
-                }
-            }
-        }
-        return selectedCoin;
+    public int getOwner() {
+        return owner; // Return the current owner of the coin.
     }
 
-    // Add a Coin to the Won Field
-    public void addWonCoin(Coin coin) {
-        fieldOfWonCoins.add(coin); // Add the coin to the won pile.
+    // Setter for Ownership
+    public void setOwner(int owner) {
+        this.owner = owner; // Assign the coin to a player.
     }
 
-    // Get Coins on Hand
-    public List<Coin> getCoinsOnHand() {
-        return coinsOnHand; // Return the player's current hand of coins.
-    }
-
-    // Set Coins on Hand
-    public void setCoinsOnHand(List<Coin> coins) {
-        this.coinsOnHand = coins; // Replace the current hand with a new list.
-    }
-
-    // Get Coins in the Field of Won Coins
-    public List<Coin> getFieldOfWonCoins() {
-        return fieldOfWonCoins; // Return the player's won pile.
-    }
-
-    // Set Field of Won Coins
-    public void setFieldOfWonCoins(List<Coin> coins) {
-        this.fieldOfWonCoins = coins; // Replace the current won pile with a new list.
+    // Check if the coin is owned
+    public boolean isOwned() {
+        return owner != -1; // Return true if the coin is owned.
     }
 
     @Override
     public String toString() {
-        return "Player " + playerNumber + " {" +
-                "CoinsOnHand = " + coinsOnHand +
-                ", FieldOfWonCoins = " + fieldOfWonCoins +
-                '}';
+        return "Coin {number = " + number +
+                ", color = " + color +
+                ", owner = " + (owner == -1 ? "Unowned" : "Player " + owner) +
+                "}";
+    }
+
+    // Factory Method to Initialize Coins
+    public static List<Coin> initializeCoins(int numberOfPlayers) {
+        List<Coin> coins = new ArrayList<>();
+
+        // Standard Chips (1-12)
+        coins.add(new Coin(1, coinColors.blue));
+        coins.add(new Coin(2, coinColors.blue));
+        coins.add(new Coin(3, coinColors.blue));
+        coins.add(new Coin(4, coinColors.red));
+        coins.add(new Coin(5, coinColors.red));
+        coins.add(new Coin(6, coinColors.red));
+        coins.add(new Coin(7, coinColors.red));
+        coins.add(new Coin(8, coinColors.red));
+        coins.add(new Coin(9, coinColors.red));
+        coins.add(new Coin(10, coinColors.blue));
+        coins.add(new Coin(11, coinColors.blue));
+        coins.add(new Coin(12, coinColors.blue));
+
+        // Extra Chips for 4 Players
+        if (numberOfPlayers == 4) {
+            coins.add(new Coin(3, coinColors.blue));  // Extra Blue Chip 3
+            coins.add(new Coin(4, coinColors.red));  // Extra Red Chip 4
+            coins.add(new Coin(9, coinColors.red));  // Extra Red Chip 9
+            coins.add(new Coin(10, coinColors.blue)); // Extra Blue Chip 10
+        }
+
+        return coins;
     }
 }
