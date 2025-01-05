@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.frauas.javaproject.twelvechipgame.controller.MainMenuController">
+   <children>
+      <Label alignment="CENTER" layoutY="30.0" prefHeight="54.0" prefWidth="600.0" text="Play against" textAlignment="CENTER">
+         <font>
+            <Font size="28.0" />
+         </font></Label>
+      <Button fx:id="threePlayerButton" layoutX="254.0" layoutY="98.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="92.0" text="3 Players" />
+      <Button fx:id="fourPlayerButton" layoutX="254.0" layoutY="149.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="92.0" text="4 Players" />
+      <Button fx:id="SettingsButton" layoutX="254.0" layoutY="248.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="92.0" text="Settings" />
+      <Button fx:id="ExitButton" layoutX="254.0" layoutY="306.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="92.0" text="Exit to Desktop" />
+   </children>
+</AnchorPane>

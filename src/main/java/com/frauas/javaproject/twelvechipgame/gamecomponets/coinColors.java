@@ -1,4 +1,4 @@
-package com.frauas.javaproject.twelvechipgame.temp;
+package com.frauas.javaproject.twelvechipgame.gamecomponets;
 
 public enum coinColors {
     RED,    // Represents red coin

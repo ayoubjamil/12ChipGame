@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.frauas.javaproject.twelvechipgame.controller.GameFinishedController">
+   <children>
+      <Label alignment="CENTER" layoutX="233.0" layoutY="23.0" prefHeight="55.0" prefWidth="119.0" text="Winner" textAlignment="CENTER">
+         <font>
+            <Font size="32.0" />
+         </font></Label>
+      <Label alignment="CENTER" layoutX="227.0" layoutY="81.0" prefHeight="34.0" prefWidth="119.0" text="Player">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="217.0" layoutY="145.0" prefHeight="35.0" prefWidth="151.0" text="Total Amount of Coins " />
+      <Label layoutX="117.0" layoutY="200.0" text="Player 1" />
+      <Label layoutX="219.0" layoutY="200.0" text="Player 2" />
+      <Label layoutX="318.0" layoutY="200.0" text="Player 3" />
+      <Label layoutX="439.0" layoutY="200.0" text="Player 4" />
+      <Label layoutX="124.0" layoutY="240.0" text="Label" />
+      <Label layoutX="226.0" layoutY="240.0" text="Label" />
+      <Label layoutX="325.0" layoutY="240.0" text="Label" />
+      <Label layoutX="446.0" layoutY="240.0" text="Label" />
+   </children>
+</AnchorPane>
