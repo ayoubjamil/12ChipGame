@@ -10,4 +10,6 @@ module com.frauas.javaproject.javafx {
 
     opens com.frauas.javaproject.twelvechipgame to javafx.fxml;
     exports com.frauas.javaproject.twelvechipgame;
+    exports com.frauas.javaproject.twelvechipgame.controller;
+    opens com.frauas.javaproject.twelvechipgame.controller to javafx.fxml;
 }
