@@ -1,5 +1,3 @@
-package logic;
-
 import data.coin.ACoin;
 import data.player.APlayer;
 import util.Pair;

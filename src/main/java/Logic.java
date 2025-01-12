@@ -1,5 +1,3 @@
-package logic;
-
 import data.Round;
 import data.coin.ACoin;
 import data.player.APlayer;
