@@ -1,16 +1,12 @@
-import data.coin.ACoin;
-import data.player.APlayer;
-import logic.ILogic;
-import logic.Logic;
-import util.Pair;
+
 
 import java.util.List;
 
 public class MainTest {
-    private static APlayer winnerOfRound;
+   // private static APlayer winnerOfRound;
 
     public static void main(String[] args) {
-        ILogic logic = setupGame();
+      /*  ILogic logic = setupGame();
 
         while (true) {
             // Play a round
@@ -78,6 +74,6 @@ public class MainTest {
             if (!coinsForChoose.isEmpty()) {
                 logic.chooseCoinToSiteToHand(activePlayer, coinsForChoose.get(0));
             }
-        }
+        }*/
     }
 }

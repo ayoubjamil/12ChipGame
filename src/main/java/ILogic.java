@@ -1,36 +1,32 @@
-import data.coin.ACoin;
-import data.player.APlayer;
-import util.Pair;
+
 
 import java.util.List;
 
 public interface ILogic {
-
     void setAmountPlayers(int amountPlayers);
-
-    List<APlayer> getPlayers();
-
-    APlayer getNextActivePlayer();
 
     void createPlayers();
 
-    void createCoins();
+    List<Player> getPlayers();
 
-    void distributeCoin();
+    void createCoins() throws Exception;
 
-    void playCoin(APlayer player, ACoin coin);
+    void distributeCoin() throws Exception;
 
-    APlayer checkForHighestPlayedCoins() throws Exception;
+    List<Coin> getCoinsForChoose();
 
-    void chooseCoinToSiteToHand(APlayer player, ACoin coin);
+    Player checkForHighestPlayedCoins() throws Exception;
 
-    List<ACoin> getCoinsForChoose();
+    void playCoin(Player player, Coin coin);
+
+    void chooseCoinToSiteToHand(Player player, Coin coin);
 
     boolean shouldEndGameBasedOnPlayerConditions();
 
-    Pair<APlayer, Integer> checkWinningPlayer();
+    Pair<Player, Integer> checkWinningPlayer();
 
-    APlayer getWinnerOfRound();
+    Player getWinnerOfRound();
 
     void startNextRound();
+
 }
