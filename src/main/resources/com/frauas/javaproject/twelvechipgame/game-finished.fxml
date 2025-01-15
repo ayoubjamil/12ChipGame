@@ -24,5 +24,6 @@
       <Label layoutX="226.0" layoutY="240.0" text="Label" />
       <Label layoutX="325.0" layoutY="240.0" text="Label" />
       <Label layoutX="446.0" layoutY="240.0" text="Label" />
+      <Button fx:id="ReturnToMainMenuButton" layoutX="240.0" layoutY="320.0" mnemonicParsing="false" text="Return to Main Menu" onAction="#onReturnToMainMenuClicked" />
    </children>
 </AnchorPane>
