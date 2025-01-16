@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 public class Logic implements ILogic {
 
@@ -20,6 +21,7 @@ public class Logic implements ILogic {
     private List<Coin> coins;
     private Round round = null;
     private int roundIndex = 0;
+    private int activePlayerIndex = 0;
 
     private Logic() {
     }
@@ -287,5 +289,29 @@ public class Logic implements ILogic {
             Pair<Player, Boolean> newPlayer = new Pair<>(player.getFirst(), false);
             players.set(i, newPlayer);
         }
+    }
+
+    /**
+     * It will return the next active player.
+     * @return
+     */
+    @Override
+    public Player getNextActivePlayer() {
+        Player roundWinner = round.getRoundWinner();
+        if (roundIndex > 0 && round != null && roundWinner != null) {
+            List<Pair<Player, Boolean>> playersRound = new ArrayList<>(players);
+            playersRound.removeIf(player -> player.first.equals(roundWinner) || player.second.equals(TRUE));
+            if (!playersRound.isEmpty()) {
+                return playersRound.get(0).getFirst();
+            }
+            return null;
+        }
+        Player activePlayer = players.get(activePlayerIndex).first;
+        activePlayerIndex++;
+        if (activePlayerIndex >= players.size()) {
+            activePlayerIndex = 0; // Explicitly reset to 0
+        }
+
+        return activePlayer;
     }
 }

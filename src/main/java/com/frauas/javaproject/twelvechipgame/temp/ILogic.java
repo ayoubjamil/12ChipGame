@@ -34,4 +34,5 @@ public interface ILogic {
 
     void startNextRound();
 
+    Player getNextActivePlayer();
 }
