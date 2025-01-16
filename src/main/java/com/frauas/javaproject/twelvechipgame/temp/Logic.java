@@ -1,8 +1,6 @@
 package com.frauas.javaproject.twelvechipgame.temp;
 
 
-
-
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Coin;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.NPC;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Player;
@@ -16,18 +14,31 @@ import static java.lang.Boolean.FALSE;
 
 public class Logic implements ILogic {
 
+    private static Logic instance = null;
     private List<Pair<Player, Boolean>> players = new ArrayList<>();
     private int amountPlayers;
     private List<Coin> coins;
     private Round round = null;
     private int roundIndex = 0;
 
+    private Logic() {
+    }
 
+    // It will allowed just one logic instance to be created.
+    public static ILogic getInstance() {
+        if (instance == null) {
+            instance = new Logic();
+        }
+        return instance;
+    }
+
+    // set amount of players
     @Override
     public void setAmountPlayers(int amountPlayers) {
         this.amountPlayers = amountPlayers;
     }
 
+    // create list of players
     @Override
     public void createPlayers() {
         players.add(new Pair<Player, Boolean>(new Player(1), FALSE)); // Adding the main player
@@ -36,6 +47,7 @@ public class Logic implements ILogic {
         }
     }
 
+    // return list of players
     @Override
     public List<Player> getPlayers() {
         return players.stream()
@@ -43,6 +55,7 @@ public class Logic implements ILogic {
                 .collect(Collectors.toList());
     }
 
+    // create a list of coins
     @Override
     public void createCoins() throws Exception {
         List<Integer> redNumbers = new ArrayList<>(Arrays.asList(4, 5, 6, 7, 8, 9));
@@ -60,6 +73,7 @@ public class Logic implements ILogic {
         Collections.shuffle(coins);
     }
 
+    // give to every players the own coins.
     @Override
     public void distributeCoin() throws Exception {
         if (coins == null) throw new Exception("Null list coins");
@@ -98,6 +112,7 @@ public class Logic implements ILogic {
         }
     }
 
+    // It will choose the coins from the field, just for the winner
     @Override
     public List<Coin> getCoinsForChoose() {
         List<Pair<Player, Coin>> listCoins = round.getPlayedCoins(); //TODO: check this
@@ -119,6 +134,7 @@ public class Logic implements ILogic {
         }
     }
 
+    // It will return the player, that played the highest coin
     @Override
     public Player checkForHighestPlayedCoins() throws Exception {
         return round.getPlayedCoins().stream()
@@ -127,6 +143,7 @@ public class Logic implements ILogic {
                 .orElseThrow(() -> new Exception("No coins played this round."));
     }
 
+    // The coin will be played
     @Override
     public void playCoin(Player player, Coin coin) {
         try {
@@ -140,6 +157,11 @@ public class Logic implements ILogic {
         }
     }
 
+    /**
+     * It will sort the coin on the table, for the winner will be placed on fieldOfWonCoins and for the losers will be taked on the hand.
+     * When the player made the choise, will be set inactive.
+     *
+     */
     @Override
     public void chooseCoinToSiteToHand(Player player, Coin coin) {
         if (round == null) {
@@ -163,6 +185,9 @@ public class Logic implements ILogic {
                 .ifPresent(i -> players.set(i, new Pair<>(player, true)));
     }
 
+    /**
+     * When the player have no coins on the hand, the game will be over.
+     */
     @Override
     public boolean shouldEndGameBasedOnPlayerConditions() {
         List<Player> playersList = players.stream().map(Pair::getFirst).toList();
@@ -175,6 +200,10 @@ public class Logic implements ILogic {
         return false;  // Return false if no players meet the end game condition
     }
 
+    /**
+     * It will return the winner(max sum) and also all the player with the correspondent sum of coins
+     * @return
+     */
     @Override
     public Pair<Player, Integer> checkWinningPlayer() {
         if (players.isEmpty()) {
@@ -197,6 +226,11 @@ public class Logic implements ILogic {
         return new Pair<>(playerWithSmallestSum, minSum); // Return the player with the smallest sum of coins on site
     }
 
+    /**
+     * It will calculate the sum of the coins on the side.
+     * @param player
+     * @return
+     */
     private int calculateSumOfCoinsOnSite(Player player) {
         List<Coin> coinsOnSite = player.getFieldOfWonCoins();
         int sumOfCoins = 0;
@@ -205,7 +239,9 @@ public class Logic implements ILogic {
         }
         return sumOfCoins;
     }
-
+    /**
+     * It will calculate the sum of the coins on the hand.
+     */
     private int calculateSumOfCoinsOnHand(Player player) {
         List<Coin> coinsOnHand = player.getCoinsOnHand();
         int sumOfCoins = 0;
@@ -215,6 +251,10 @@ public class Logic implements ILogic {
         return sumOfCoins;
     }
 
+    /**
+     * It will return the round winner.
+     * @return
+     */
     @Override
     public Player getWinnerOfRound() {
         if (round.getRoundWinner() == null) {
@@ -228,6 +268,9 @@ public class Logic implements ILogic {
         return round.getRoundWinner();
     }
 
+    /**
+     * It will start the next round.
+     */
     @Override
     public void startNextRound() {
         roundIndex++;
@@ -235,6 +278,9 @@ public class Logic implements ILogic {
         resetPlayerPlayedFlags();
     }
 
+    /**
+     * It will active the inactive player.
+     */
     private void resetPlayerPlayedFlags() {
         for (int i = 0; i < players.size(); i++) {
             Pair<Player, Boolean> player = players.get(i);
