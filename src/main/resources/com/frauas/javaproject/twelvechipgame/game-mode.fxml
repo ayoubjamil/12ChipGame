@@ -4,9 +4,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.frauas.javaproject.twelvechipgame.controller.GameModeController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.frauas.javaproject.twelvechipgame.controller.GameModeController">
    <children>
-      <Button fx:id="FieldButton1" layoutX="248.0" layoutY="183.0" mnemonicParsing="false" text="Button" />
+      <Button fx:id="FieldButton1" layoutX="248.0" layoutY="183.0" mnemonicParsing="false" onAction="#onButtonClickedUpdate" text="Button" />
       <Button fx:id="FieldButton2" layoutX="300.0" layoutY="183.0" mnemonicParsing="false" text="Button" />
       <Button fx:id="FieldButton3" layoutX="248.0" layoutY="206.0" mnemonicParsing="false" text="Button" />
       <Button fx:id="FieldButton4" layoutX="300.0" layoutY="206.0" mnemonicParsing="false" text="Button" />

@@ -1,6 +1,6 @@
 package com.frauas.javaproject.twelvechipgame.controller;
 
-
+import com.frauas.javaproject.twelvechipgame.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +26,9 @@ public class MainMenuController {
     @FXML
     private TextArea debugField;
 
-    String resourcePath = "/com/frauas/javaproject/twelvechipgame/";
+    int resolutionXValue = 1280;
+    int resolutionYValue = 720;
+
 
     private Stage stage;
     private Scene scene;
@@ -59,9 +61,9 @@ public class MainMenuController {
 
 
         DifficultyController difficultyController = loader.getController();
-        difficultyController.initData(3);
+        difficultyController.initData(3, resolutionXValue, resolutionYValue);
 
-        scene = new Scene(root);
+        scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
 
@@ -80,9 +82,9 @@ public class MainMenuController {
 
 
         DifficultyController difficultyController = loader.getController();
-        difficultyController.initData(4);
+        difficultyController.initData(4, resolutionXValue, resolutionYValue);
 
-        scene = new Scene(root);
+        scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
 
@@ -91,9 +93,15 @@ public class MainMenuController {
     }
 
     public void switchToSettings(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/frauas/javaproject/twelvechipgame/settings.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/frauas/javaproject/twelvechipgame/settings.fxml"));
+//        Parent root = FXMLLoader.load(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
+        Parent root = loader.load();
+
+        SettingsController settingsController = loader.getController();
+        settingsController.initData(resolutionXValue);
+
+        scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
     }
@@ -102,6 +110,10 @@ public class MainMenuController {
         System.exit(0);
     }
 
+    public void initData(int resolutionXValue, int resolutionYValue) {
+            this.resolutionXValue = resolutionXValue;
+            this.resolutionYValue = resolutionYValue;
+    }
 
     /**
      * Called automatically after all @FXML fields are injected.

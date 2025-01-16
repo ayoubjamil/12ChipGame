@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -79,7 +80,6 @@ public class GameModeController {
 
 
     // Player 4
-
     @FXML
     public Label Player4Label;
     @FXML
@@ -99,6 +99,7 @@ public class GameModeController {
     @FXML
     public Label Player4CoinTaken4;
 
+    //Playing field
     @FXML
     public Button FieldButton1;
     @FXML
@@ -109,10 +110,13 @@ public class GameModeController {
     public Button FieldButton4;
 
 
-
+    //change scene to Game Finished scene
     @FXML
     public Button GameOverButton;
 
+    //window resolution
+    int resolutionXValue = 1280;
+    int resolutionYValue = 720;
 
     private Stage stage;
     private Scene scene;
@@ -125,7 +129,7 @@ public class GameModeController {
     private String difficulty;
 
     // test variablen
-    private boolean isHandEmpty = false;
+    private boolean isHandEmpty = true;
 
 
 
@@ -200,16 +204,33 @@ public class GameModeController {
 
     }
 
+    public void onButtonClickedUpdate(ActionEvent actionEvent) {
+        int x = 11;
 
-    public void initData(int numberOfPlayers, String difficulty) throws IOException {
+
+        FieldButton1.setText(Integer.toString(x));
+        FieldButton1.setTextFill(Paint.valueOf("white"));
+
+    };
+
+    public void nextTurn(){
+
+
+    };
+
+    public void initData(int numberOfPlayers, String difficulty, int resolutionXValue, int resolutionYValue) throws IOException {
         this.numberOfPlayers = numberOfPlayers;
         this.difficulty = difficulty;
         GameOverButton.setVisible(!GameOverButton.isVisible());
-
+        this.resolutionXValue = resolutionXValue;
+        this.resolutionYValue = resolutionYValue;
 
         if (numberOfPlayers == 3) {
             toggleVisibilityForPlayer4();
         }
+
+
+        nextTurn();
 
         if (isHandEmpty) {
             toggleVisibilityForAllPlayers(numberOfPlayers);
@@ -254,9 +275,9 @@ public class GameModeController {
 
 
         GameFinishedController gameFinishedController = loader.getController();
-        gameFinishedController.initData(18,23,24,-1, 3);
+        gameFinishedController.initData(18,23,24,-1, 3, resolutionXValue, resolutionYValue);
 
-        scene = new Scene(root);
+        scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
 

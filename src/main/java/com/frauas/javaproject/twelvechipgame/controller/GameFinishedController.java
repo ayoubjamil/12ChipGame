@@ -24,13 +24,17 @@ public class GameFinishedController {
     private int player3Total;
     private int player4Total;
     private int numberOfPlayers;
+    private int resolutionXValue;
+    private int resolutionYValue;
 
-    public void initData(int player1total, int player2total, int player3total, int player4total, int numberOfPlayers) {
+    public void initData(int player1total, int player2total, int player3total, int player4total, int numberOfPlayers, int resolutionXValue, int resolutionYValue) {
         this.player1Total = player1total;
         this.player2Total = player2total;
         this.player3Total = player3total;
         this.player4Total = player4total;
         this.numberOfPlayers = numberOfPlayers;
+        this.resolutionXValue = resolutionXValue;
+        this.resolutionYValue = resolutionYValue;
 
     }
 
@@ -43,14 +47,16 @@ public class GameFinishedController {
         Parent root = loader.load();
 
 
-//        MainMenuController mainMenuController = loader.getController();
-//        mainMenuController.initData(numberOfPlayers, "hard");
+       MainMenuController mainMenuController = loader.getController();
+       mainMenuController.initData(resolutionXValue, resolutionYValue );
 
-        scene = new Scene(root);
+        scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
 
 
     }
+
+
 
 }

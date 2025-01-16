@@ -13,6 +13,9 @@ import java.io.IOException;
 
 public class DifficultyController {
 
+    int resolutionXValue = 1280;
+    int resolutionYValue = 720;
+
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -31,11 +34,15 @@ public class DifficultyController {
     }
 
 
-    public void initData(int numberOfPlayers) {
+    public void initData(int numberOfPlayers, int resolutionXValue, int resolutionYValue ) {
         if (numberOfPlayers == 3 || numberOfPlayers == 4) {
             this.numberOfPlayers = numberOfPlayers;
 
+
         }
+
+        this.resolutionXValue = resolutionXValue;
+        this.resolutionYValue = resolutionYValue;
 
     }
 
@@ -49,9 +56,9 @@ public class DifficultyController {
 
 
        GameModeController gameModeController = loader.getController();
-        gameModeController.initData(numberOfPlayers, "hard");
+        gameModeController.initData(numberOfPlayers, "hard", resolutionXValue, resolutionYValue);
 
-        scene = new Scene(root);
+        scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
 
@@ -68,9 +75,9 @@ public class DifficultyController {
 
 
         GameModeController gameModeController = loader.getController();
-        gameModeController.initData(numberOfPlayers, "easy");
+        gameModeController.initData(numberOfPlayers, "easy", resolutionXValue, resolutionYValue);
 
-        scene = new Scene(root);
+        scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
     }
