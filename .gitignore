@@ -2,3 +2,6 @@
 .idea/
 *.iml
 /out
+*.class
+target/classes/com/frauas/javaproject/twelvechipgame/Main.class
+src/main/java/com/frauas/javaproject/twelvechipgame/temp/.DS_Store
