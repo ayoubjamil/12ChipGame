@@ -11,7 +11,7 @@ public class Round {
     public int roundIndex;
     public int amountPlayers;
 
-    private List<Pair<Player, Coin>> playedCoins;
+    private List<CustomPair<Player, Coin>> playedCoins;
     private Player roundWinner;
 
     public Round(int amountPlayers, int roundIndex) {
@@ -21,12 +21,12 @@ public class Round {
     }
 
     //put coin on table
-    public void addPlayedCoins(Pair<Player, Coin> coinPair) {
+    public void addPlayedCoins(CustomPair<Player, Coin> coinPair) {
         playedCoins.add(coinPair);
 
     }
 
-    public List<Pair<Player, Coin>> getPlayedCoins() {
+    public List<CustomPair<Player, Coin>> getPlayedCoins() {
         return playedCoins;
     }
 

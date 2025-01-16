@@ -16,7 +16,7 @@ import static java.lang.Boolean.TRUE;
 public class Logic implements ILogic {
 
     private static Logic instance = null;
-    private List<Pair<Player, Boolean>> players = new ArrayList<>();
+    private List<CustomPair<Player, Boolean>> players = new ArrayList<>();
     private int amountPlayers;
     private List<Coin> coins;
     private Round round = null;
@@ -43,9 +43,9 @@ public class Logic implements ILogic {
     // create list of players
     @Override
     public void createPlayers() {
-        players.add(new Pair<Player, Boolean>(new Player(1), FALSE)); // Adding the main player
+        players.add(new CustomPair<Player, Boolean>(new Player(1), FALSE)); // Adding the main player
         for (int i = 1; i < amountPlayers; i++) {
-            players.add(new Pair<Player, Boolean>(new NPC(i + 1, true), FALSE));
+            players.add(new CustomPair<Player, Boolean>(new NPC(i + 1, true), FALSE));
         }
     }
 
@@ -53,7 +53,7 @@ public class Logic implements ILogic {
     @Override
     public List<Player> getPlayers() {
         return players.stream()
-                .map(Pair::getFirst)
+                .map(CustomPair::getFirst)
                 .collect(Collectors.toList());
     }
 
@@ -90,7 +90,7 @@ public class Logic implements ILogic {
                 .limit(amountPlayers * 2)
                 .collect(Collectors.toList());
 
-        for (Pair<Player, Boolean> player : players) {
+        for (CustomPair<Player, Boolean> player : players) {
             if (redCoins.size() >= 2 && blueCoins.size() >= 2) {
                 // Give each player 2 red and 2 blue coins
                 List<Coin> redCoinsToDistribute = new ArrayList<>(redCoins.subList(0, 2));
@@ -117,11 +117,11 @@ public class Logic implements ILogic {
     // It will choose the coins from the field, just for the winner
     @Override
     public List<Coin> getCoinsForChoose() {
-        List<Pair<Player, Coin>> listCoins = round.getPlayedCoins(); //TODO: check this
+        List<CustomPair<Player, Coin>> listCoins = round.getPlayedCoins(); //TODO: check this
 
         // Collect all red coins
         List<Coin> redCoins = listCoins.stream()
-                .map(Pair::getSecond)
+                .map(CustomPair::getSecond)
                 .filter(coin -> coin.getColor() == coinColors.RED)
                 .collect(Collectors.toList());
 
@@ -130,7 +130,7 @@ public class Logic implements ILogic {
         } else {
             // If no red coins are found, collect and return all blue coins
             return listCoins.stream()
-                    .map(Pair::getSecond)
+                    .map(CustomPair::getSecond)
                     .filter(coin -> coin.getColor() == coinColors.BLUE)
                     .collect(Collectors.toList());
         }
@@ -141,7 +141,7 @@ public class Logic implements ILogic {
     public Player checkForHighestPlayedCoins() throws Exception {
         return round.getPlayedCoins().stream()
                 .max(Comparator.comparingInt(pair -> pair.getSecond().getNumber()))
-                .map(Pair::getFirst)
+                .map(CustomPair::getFirst)
                 .orElseThrow(() -> new Exception("No coins played this round."));
     }
 
@@ -153,7 +153,7 @@ public class Logic implements ILogic {
             int coinIndex = IntStream.range(0, coinsOnHand.size()).filter(i -> coinsOnHand.get(i).getNumber() == coin.getNumber() &&
                     coinsOnHand.get(i).getOwner() == coin.getOwner()).findFirst().getAsInt();
             player.playCoin(coinIndex);
-            round.addPlayedCoins(new Pair<>(player, coin));  // Record the coin played by the player
+            round.addPlayedCoins(new CustomPair<>(player, coin));  // Record the coin played by the player
         } catch (Exception ex) {
             //TODO: ???
         }
@@ -184,7 +184,7 @@ public class Logic implements ILogic {
         IntStream.range(0, players.size())
                 .filter(i -> players.get(i).getFirst().equals(player))
                 .findFirst()
-                .ifPresent(i -> players.set(i, new Pair<>(player, true)));
+                .ifPresent(i -> players.set(i, new CustomPair<>(player, true)));
     }
 
     /**
@@ -192,7 +192,7 @@ public class Logic implements ILogic {
      */
     @Override
     public boolean shouldEndGameBasedOnPlayerConditions() {
-        List<Player> playersList = players.stream().map(Pair::getFirst).toList();
+        List<Player> playersList = players.stream().map(CustomPair::getFirst).toList();
         for (Player player : playersList) {
             // Check if any player has no coins left on hand
             if (player.getCoinsOnHand().size() == 0) {
@@ -207,7 +207,7 @@ public class Logic implements ILogic {
      * @return
      */
     @Override
-    public Pair<Player, Integer> checkWinningPlayer() {
+    public CustomPair<Player, Integer> checkWinningPlayer() {
         if (players.isEmpty()) {
             return null; // Return null or throw an exception if there are no players
         }
@@ -215,7 +215,7 @@ public class Logic implements ILogic {
         Player playerWithSmallestSum = null;
         int minSum = Integer.MAX_VALUE; // Initialize with the largest possible integer to ensure any sum is smaller
 
-        for (Pair<Player, Boolean> playerPair : players) {
+        for (CustomPair<Player, Boolean> playerPair : players) {
             Player player = playerPair.getFirst();
             int sumOfCoins = calculateSumOfCoinsOnSite(player);
             sumOfCoins = sumOfCoins + calculateSumOfCoinsOnHand(player);
@@ -225,7 +225,7 @@ public class Logic implements ILogic {
             }
         }
 
-        return new Pair<>(playerWithSmallestSum, minSum); // Return the player with the smallest sum of coins on site
+        return new CustomPair<>(playerWithSmallestSum, minSum); // Return the player with the smallest sum of coins on site
     }
 
     /**
@@ -285,8 +285,8 @@ public class Logic implements ILogic {
      */
     private void resetPlayerPlayedFlags() {
         for (int i = 0; i < players.size(); i++) {
-            Pair<Player, Boolean> player = players.get(i);
-            Pair<Player, Boolean> newPlayer = new Pair<>(player.getFirst(), false);
+            CustomPair<Player, Boolean> player = players.get(i);
+            CustomPair<Player, Boolean> newPlayer = new CustomPair<>(player.getFirst(), false);
             players.set(i, newPlayer);
         }
     }
@@ -299,7 +299,7 @@ public class Logic implements ILogic {
     public Player getNextActivePlayer() {
         Player roundWinner = round.getRoundWinner();
         if (roundIndex > 0 && round != null && roundWinner != null) {
-            List<Pair<Player, Boolean>> playersRound = new ArrayList<>(players);
+            List<CustomPair<Player, Boolean>> playersRound = new ArrayList<>(players);
             playersRound.removeIf(player -> player.first.equals(roundWinner) || player.second.equals(TRUE));
             if (!playersRound.isEmpty()) {
                 return playersRound.get(0).getFirst();

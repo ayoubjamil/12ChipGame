@@ -28,7 +28,7 @@ public interface ILogic {
 
     boolean shouldEndGameBasedOnPlayerConditions();
 
-    Pair<Player, Integer> checkWinningPlayer();
+    CustomPair<Player, Integer> checkWinningPlayer();
 
     Player getWinnerOfRound();
 
