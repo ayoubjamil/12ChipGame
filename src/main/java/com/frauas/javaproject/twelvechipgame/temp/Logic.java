@@ -26,7 +26,10 @@ public class Logic implements ILogic {
     private Logic() {
     }
 
-    // It will allowed just one logic instance to be created.
+    /**
+     * It will allowed just one logic instance to be created.
+     * @return
+     */
     public static ILogic getInstance() {
         if (instance == null) {
             instance = new Logic();
@@ -34,13 +37,18 @@ public class Logic implements ILogic {
         return instance;
     }
 
-    // set amount of players
+    /**
+     * Set amount of players.
+     * @param amountPlayers
+     */
     @Override
     public void setAmountPlayers(int amountPlayers) {
         this.amountPlayers = amountPlayers;
     }
 
-    // create list of players
+    /**
+     * create list of players
+     */
     @Override
     public void createPlayers() {
         players.add(new CustomPair<Player, Boolean>(new Player(1), FALSE)); // Adding the main player
@@ -49,7 +57,10 @@ public class Logic implements ILogic {
         }
     }
 
-    // return list of players
+    /**
+     * return list of players
+     * @return
+     */
     @Override
     public List<Player> getPlayers() {
         return players.stream()
@@ -57,7 +68,10 @@ public class Logic implements ILogic {
                 .collect(Collectors.toList());
     }
 
-    // create a list of coins
+    /**
+     * Create a list of coins
+     * @throws Exception
+     */
     @Override
     public void createCoins() throws Exception {
         List<Integer> redNumbers = new ArrayList<>(Arrays.asList(4, 5, 6, 7, 8, 9));
@@ -75,7 +89,10 @@ public class Logic implements ILogic {
         Collections.shuffle(coins);
     }
 
-    // give to every players the own coins.
+    /**
+     * give to every players the own coins.
+     * @throws Exception
+     */
     @Override
     public void distributeCoin() throws Exception {
         if (coins == null) throw new Exception("Null list coins");
@@ -114,7 +131,10 @@ public class Logic implements ILogic {
         }
     }
 
-    // It will choose the coins from the field, just for the winner
+    /** It will choose the coins from the field, just for the winner
+     *
+      */
+
     @Override
     public List<Coin> getCoinsForChoose() {
         List<CustomPair<Player, Coin>> listCoins = round.getPlayedCoins(); //TODO: check this
@@ -136,7 +156,11 @@ public class Logic implements ILogic {
         }
     }
 
-    // It will return the player, that played the highest coin
+    /** It will return the player, that played the highest coin
+     *
+     * @return
+     * @throws Exception
+     */
     @Override
     public Player checkForHighestPlayedCoins() throws Exception {
         return round.getPlayedCoins().stream()
