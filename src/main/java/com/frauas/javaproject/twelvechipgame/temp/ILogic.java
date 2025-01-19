@@ -10,6 +10,8 @@ import java.util.List;
 public interface ILogic {
     void setAmountPlayers(int amountPlayers);
 
+    void setHardMode(boolean isHardMode);
+
     void createPlayers();
 
     List<Player> getPlayers();

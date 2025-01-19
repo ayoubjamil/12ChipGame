@@ -40,7 +40,7 @@ public class Round {
 
     //remove coin from table
     public void removePlayedCoins(Coin coinToRemove) {
-        playedCoins.removeIf(pair -> pair.getSecond().equals(coinToRemove));
+        playedCoins.removeIf(pair -> pair.getValue().equals(coinToRemove));
     }
 }
 
