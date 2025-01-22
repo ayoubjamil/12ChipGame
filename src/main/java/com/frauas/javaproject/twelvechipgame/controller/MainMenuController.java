@@ -115,32 +115,5 @@ public class MainMenuController {
             this.resolutionYValue = resolutionYValue;
     }
 
-    /**
-     * Called automatically after all @FXML fields are injected.
-     * Put your event handlers here.
-     */
- /*   @FXML
-    private void initialize() {
-        // Hook up button actions:
-        threePlayerButton.setOnAction(event -> {
-            gameMode.setThreePlayerMode(true);
-            debugField.appendText("Three-player mode: " + gameMode.isThreePlayerMode() + "\n");
 
-        });
-
-        fourPlayerButton.setOnAction(event -> {
-            gameMode.setFourPlayerMode(true);
-            debugField.appendText("Four-player mode: " + gameMode.isFourPlayerMode() + "\n");
-        });
-
-        settingsButton.setOnAction(event -> {
-            debugField.appendText("Open Settings...\n");
-            // open a settings dialog, etc.
-        });
-
-        exitButton.setOnAction(event -> {
-            // Typically close the window or exit the application
-            System.exit(0);
-        });
-    }*/
 }

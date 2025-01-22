@@ -18,6 +18,11 @@ public class Coin {
         this.owner = -1; // Default: unowned at initialization.
     }
 
+    public Coin (){
+        this.number = 0;
+        this.color = coinColors.WHITE;
+        this.owner = -1;
+    }
     // Getters
     public int getNumber() {
         return number; // Return the numerical value of the coin.

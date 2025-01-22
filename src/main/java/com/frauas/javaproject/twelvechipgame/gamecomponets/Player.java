@@ -61,6 +61,10 @@ public class Player {
         return new ArrayList<>(coinsOnHand); // Return a copy of the list to prevent external modification.
     }
 
+    public void setCoinsOnHand(Coin coin) {
+        this.coinsOnHand.add(coin);
+    }
+
     // Add a Coin to the Won Field
     public void addWonCoin(Coin coin) {
         if (fieldOfWonCoins.size() >= MAX_COINS) {

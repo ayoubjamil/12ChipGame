@@ -56,7 +56,7 @@ public class SettingsController {
         }
 
         if(quadHD.isSelected()) {
-            resolutionXValue = 2550;
+            resolutionXValue = 2560;
             resolutionYValue = 1440;
             quadHD.selectedProperty().set(true);
         }
@@ -78,8 +78,8 @@ public class SettingsController {
             fullHD.setSelected(true);
             hd.setSelected(false);
             quadHD.setSelected(false);
-        } else if (resolution == 2550){
-            this.resolutionXValue = 2550;
+        } else if (resolution == 2560){
+            this.resolutionXValue = 2560;
             this.resolutionYValue = 1440;
             quadHD.setSelected(true);
             fullHD.setSelected(false);

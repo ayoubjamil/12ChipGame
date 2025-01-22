@@ -37,8 +37,6 @@ public class DifficultyController {
     public void initData(int numberOfPlayers, int resolutionXValue, int resolutionYValue ) {
         if (numberOfPlayers == 3 || numberOfPlayers == 4) {
             this.numberOfPlayers = numberOfPlayers;
-
-
         }
 
         this.resolutionXValue = resolutionXValue;
@@ -55,8 +53,8 @@ public class DifficultyController {
         Parent root = loader.load();
 
 
-       GameModeController gameModeController = loader.getController();
-        gameModeController.initData(numberOfPlayers, "hard", resolutionXValue, resolutionYValue);
+        GameModeController gameModeController = loader.getController();
+        gameModeController.initData(numberOfPlayers, true, resolutionXValue, resolutionYValue);
 
         scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
@@ -75,7 +73,7 @@ public class DifficultyController {
 
 
         GameModeController gameModeController = loader.getController();
-        gameModeController.initData(numberOfPlayers, "easy", resolutionXValue, resolutionYValue);
+        gameModeController.initData(numberOfPlayers, false, resolutionXValue, resolutionYValue);
 
         scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
