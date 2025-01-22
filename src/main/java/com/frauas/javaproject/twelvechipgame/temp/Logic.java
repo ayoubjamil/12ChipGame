@@ -76,11 +76,13 @@ public class Logic implements ILogic {
 
     /**
      * Create a list of coins
+     *
      */
     @Override
-    public void createCoins() {
+    public List<Coin> createCoins() {
         coins = Coin.initializeCoins(amountPlayers);
         Collections.shuffle(coins);
+        return coins;
     }
 
     /**

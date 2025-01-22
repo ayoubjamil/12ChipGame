@@ -31,8 +31,8 @@ public interface ILogic {
     void createPlayers();
 
     /**
-     * Provides a list of all active players currently participating in the game.
-     * This method is typically used to iterate over players for gameplay mechanics such as turns and scoring.
+     * Provides a list of all players currently participating in the game.
+     *
      */
     List<Player> getPlayers();
 
@@ -41,7 +41,7 @@ public interface ILogic {
      * the coins with specific values and possibly attributes, and shuffling them if necessary
      * to ensure fair distribution.
      */
-    void createCoins();
+    List<Coin> createCoins();
 
     /**
      * Distributes the initial set of coins among all players. This setup phase is crucial
@@ -50,64 +50,49 @@ public interface ILogic {
     void distributeCoin();
 
     /**
-     * Selects coins that are available for the winning player to choose from after a round.
-     * This selection might be based on specific game rules, such as only allowing the selection of certain types
-     * of coins or from certain players.
+     * Selects coins that are available for the player to choose from after a round.
      */
     List<Coin> getCoinsForChoose();
 
     /**
      * Determines which player played the highest valued coin in the current round.
-     * This is a critical component of the game logic that may determine the winner of a round
-     * or who gets first pick of coins from the table.
-
-     * return The player who played the highest-valued coin, or null if no such coin was played.
+     * return The player who played the highest-valued coin.
      */
     Player checkForHighestPlayedCoins();
 
     /**
-     * Facilitates a player's action of playing a coin. This includes logic to validate the play,
-     * record it, and update game state accordingly. This method is central to the game's progression.
+     * Facilitates a player's action of playing a coin.
      */
     void playCoin(Player player, Coin coin);
 
     /**
-     * Assigns a chosen coin to either the winning player's pile of won coins or returns it to their hand,
-     * depending on the outcome of the round and the rules of the game. This method helps manage the state
-     * of coins post-selection.
+     * Assigns a chosen coin to either the winning player's pile of won coins or returns it to their hand.
      */
     void chooseCoinToSiteToHand(Player player, Coin coin);
 
     /**
-     * Evaluates whether the conditions to end the game have been met. This could be based on a variety of
-     * conditions such as all coins being claimed, a player reaching a scoring threshold, or other end-game criteria.
-     * <p>
+     * Evaluates whether the conditions to end the game have been met.
      * return: true if the game should end based on current conditions, false otherwise.
      */
     boolean shouldEndGameBasedOnPlayerConditions();
 
     /**
-     * Determines the winner of the game based on the current state of player scores, which are calculated
-     * from the sum of coin values each player has won or still holds. This method is critical for
-     * concluding the game and declaring the final winner.
-     * <p>
-     * return: A CustomPair containing the player with the smallest sum of coin values (indicating the winner in some games)
-     * and their total coin value sum.
+     * Get the winner of the game, which are calculated
+     * from the sum of coin values each player has won or still holds.
+     * return: A CustomPair containing the player with the sum of coin values
      */
     CustomPair<Player, Integer> checkWinningPlayer();
 
     List<CustomPair<Player, Integer>> calculateTotalCoinSumsForPlayers();
 
     /**
-     * Retrieves the player who won the most recent round of the game. This could influence game dynamics,
-     * such as who starts the next round or special bonuses awarded to the round winner.
-     * <p>
-     * return: The Player who won the most recent round, or null if there was no clear winner.
+     * Retrieves the player who won the recent round of the game.
+     * return: The Player who won the recent round.
      */
     Player getWinnerOfRound();
 
     /**
-     * Advances the game to the next round. This method is responsible for updating round-specific settings,
+     * Start the game to the next round. This method is responsible for updating round-specific settings,
      * resetting or updating necessary player and game state attributes to reflect the new round's beginning.
      */
     void startNextRound();
