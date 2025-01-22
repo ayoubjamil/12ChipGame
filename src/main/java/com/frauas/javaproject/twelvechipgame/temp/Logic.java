@@ -1,6 +1,5 @@
 package com.frauas.javaproject.twelvechipgame.temp;
 
-
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Coin;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.NPC;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Player;
@@ -9,6 +8,7 @@ import com.frauas.javaproject.twelvechipgame.gamecomponets.coinColors;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -35,6 +35,11 @@ public class Logic implements ILogic {
             instance = new Logic();
         }
         return instance;
+    }
+
+    @Override
+    public int getActualRoundNumber() {
+        return roundIndex;
     }
 
     /**
@@ -66,28 +71,15 @@ public class Logic implements ILogic {
      */
     @Override
     public List<Player> getPlayers() {
-        return players.stream()
-                .map(CustomPair::getKey)
-                .collect(Collectors.toList());
+        return players.stream().map(CustomPair::getKey).collect(Collectors.toList());
     }
 
     /**
      * Create a list of coins
      */
     @Override
-    public void createCoins() throws Exception {
-        List<Integer> redNumbers = new ArrayList<>(Arrays.asList(4, 5, 6, 7, 8, 9));
-        List<Integer> blueNumbers = new ArrayList<>(Arrays.asList(1, 2, 3, 10, 11, 12));
-
-        // Check if the amount of players is more than 3, then add additional numbers
-        if (amountPlayers > 3) {
-            redNumbers.addAll(Arrays.asList(9, 4));  // Add extra red coins
-            blueNumbers.addAll(Arrays.asList(10, 3));  // Add extra blue coins
-        }
-
+    public void createCoins() {
         coins = Coin.initializeCoins(amountPlayers);
-
-        if (coins == null) throw new Exception("Null list coins");
         Collections.shuffle(coins);
     }
 
@@ -97,12 +89,8 @@ public class Logic implements ILogic {
     @Override
     public void distributeCoin() {
         // Collect a specific number of red and blue coins based on player requirements
-        List<Coin> redCoins = coins.stream()
-                .filter(c -> c.getColor() == coinColors.RED)
-                .collect(Collectors.toList());
-        List<Coin> blueCoins = coins.stream()
-                .filter(c -> c.getColor() == coinColors.BLUE)
-                .collect(Collectors.toList());
+        List<Coin> redCoins = coins.stream().filter(c -> c.getColor() == coinColors.RED).collect(Collectors.toList());
+        List<Coin> blueCoins = coins.stream().filter(c -> c.getColor() == coinColors.BLUE).collect(Collectors.toList());
 
         for (CustomPair<Player, Boolean> player : players) {
 
@@ -123,6 +111,7 @@ public class Logic implements ILogic {
             // Remove the distributed coins from the available lists
             redCoins.subList(0, 2).clear();
             blueCoins.subList(0, 2).clear();
+            System.out.println("distributeCoin: " + player.getKey().toString());
         }
     }
 
@@ -135,19 +124,13 @@ public class Logic implements ILogic {
         List<CustomPair<Player, Coin>> listCoins = round.getPlayedCoins();
 
         // Collect all red coins
-        List<Coin> redCoins = listCoins.stream()
-                .map(CustomPair::getValue)
-                .filter(coin -> coin.getColor() == coinColors.RED)
-                .collect(Collectors.toList());
+        List<Coin> redCoins = listCoins.stream().map(CustomPair::getValue).filter(coin -> coin.getColor() == coinColors.RED).collect(Collectors.toList());
 
         if (!redCoins.isEmpty()) {
             return redCoins;  // Return all red coins if any
         } else {
             // If no red coins are found, collect and return all blue coins
-            return listCoins.stream()
-                    .map(CustomPair::getValue)
-                    .filter(coin -> coin.getColor() == coinColors.BLUE)
-                    .collect(Collectors.toList());
+            return listCoins.stream().map(CustomPair::getValue).filter(coin -> coin.getColor() == coinColors.BLUE).collect(Collectors.toList());
         }
     }
 
@@ -155,11 +138,8 @@ public class Logic implements ILogic {
      * It will return the player, that played the highest coin
      */
     @Override
-    public Player checkForHighestPlayedCoins() throws Exception {
-        return round.getPlayedCoins().stream()
-                .max(Comparator.comparingInt(pair -> pair.getValue().getNumber()))
-                .map(CustomPair::getKey)
-                .orElseThrow(() -> new Exception("No coins played this round."));
+    public Player checkForHighestPlayedCoins() {
+        return round.getPlayedCoins().stream().max(Comparator.comparingInt(pair -> pair.getValue().getNumber())).map(CustomPair::getKey).orElse(null);
     }
 
     // The coin will be played
@@ -167,25 +147,42 @@ public class Logic implements ILogic {
     public void playCoin(Player player, Coin coin) {
         try {
             if (player instanceof NPC) {
-                // Handle NPC-specific logic
-                NPC npc = (NPC) player; // Cast to NPC
-                Coin playedCoin = npc.playCoin(); // Call NPC's playCoin logic
-                round.addPlayedCoins(new CustomPair<>(npc, playedCoin)); // Record the coin played by the NPC
+                handleNPCPlayer((NPC) player);
             } else {
-                // Handle regular Player logic
-                List<Coin> coinsOnHand = player.getCoinsOnHand();
-                int coinIndex = IntStream.range(0, coinsOnHand.size())
-                        .filter(i -> coinsOnHand.get(i).getNumber() == coin.getNumber() &&
-                                coinsOnHand.get(i).getOwner() == coin.getOwner())
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("Coin not found in hand!"));
-
-                player.playCoin(coinIndex);
-                round.addPlayedCoins(new CustomPair<>(player, coin)); // Record the coin played by the Player
+                handleRegularPlayer(player, coin);
             }
-        } catch (Exception ex) {
+        } catch (IllegalStateException | IllegalArgumentException ex) {
             System.out.println("Error: " + ex.getMessage());
         }
+    }
+
+    private void handleNPCPlayer(NPC npc) {
+        Coin playedCoin = npc.playCoin();
+        validateAndRecordCoin(npc, playedCoin);
+        npc.playCoinByValue(playedCoin.getNumber());
+        System.out.println(">>>  " + "NPC player " + npc.getPlayerNumber() + " plays " + playedCoin);
+    }
+
+    private void handleRegularPlayer(Player player, Coin coin) throws IllegalArgumentException {
+        int coinIndex = findCoinIndex(player.getCoinsOnHand(), coin);
+        validateAndRecordCoin(player, coin);
+        player.playCoin(coinIndex);
+        System.out.println(">>>  " + "Player " + player.getPlayerNumber() + " plays " + coin);
+
+    }
+
+    private int findCoinIndex(List<Coin> coinsOnHand, Coin coin) {
+        return IntStream.range(0, coinsOnHand.size()).filter(i -> coinsOnHand.get(i).getId() == coin.getId()).findFirst().orElseThrow(() -> new IllegalArgumentException("Coin not found in hand!"));
+    }
+
+    private void validateAndRecordCoin(Player player, Coin coin) {
+        if (isCoinIDInUse(player, coin)) {
+            throw new IllegalStateException("Coin is already in use.");
+        }
+        if (isCoinAlreadyWon(coin)) {
+            throw new IllegalStateException("Coin has already been won.");
+        }
+        round.addPlayedCoins(new CustomPair<>(player, coin));
     }
 
 
@@ -196,26 +193,48 @@ public class Logic implements ILogic {
     @Override
     public void chooseCoinToSiteToHand(Player player, Coin coin) {
         try {
-            // Check if the coin is red or if the player is the round winner
-            if (player.equals(round.getRoundWinner())) {
-                player.addWonCoin(coin); //TODO: catch
-            } else {
-                player.takeCoin(coin);//TODO: catch
+            Coin chosenCoin = coin;
+            if (player instanceof NPC) {
+                NPC npc = (NPC) player;
+                chosenCoin = npc.chooseCoin(getCoinsForChoose());
             }
 
-            // Use a stream to find the index of the player in the players list and set the flag to true
-            IntStream.range(0, players.size())
-                    .filter(i -> players.get(i).getKey().equals(player))
-                    .findFirst()
-                    .ifPresent(i -> players.set(i, new CustomPair<>(player, true)));
+            processChosenCoin(player, chosenCoin);
+            markPlayerActive(player);
 
-            // Proceed with the method assuming round is not null
-            round.removePlayedCoins(coin);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+        } catch (IllegalStateException | IllegalArgumentException ex) {
+            System.out.println("Error: " + ex.getMessage());  // Consider replacing with proper logging
+        }
+    }
+
+    private void processChosenCoin(Player player, Coin coin) {
+        validateCoinOwnership(player, coin);
+
+        coin.setOwner(player.getPlayerNumber());
+        if (player.equals(round.getRoundWinner())) {
+            player.addWonCoin(coin);
+            System.out.println(">>>  " + player.toString() + " moves coin " + coin.toString() + " to site (to won)");
+        } else {
+            player.takeCoin(coin);
+            System.out.println(">>>  " + player.toString() + " takes coin " + coin.toString() + " to hand (take coin)");
         }
 
+        round.removePlayedCoins(coin);
     }
+
+    private void validateCoinOwnership(Player player, Coin coin) {
+        if (isCoinIDInUse(player, coin)) {
+            throw new IllegalStateException("Coin is already in use.");
+        }
+        if (isCoinAlreadyWon(coin)) {
+            throw new IllegalStateException("Coin has already been won.");
+        }
+    }
+
+    private void markPlayerActive(Player player) {
+        IntStream.range(0, players.size()).filter(i -> players.get(i).getKey().equals(player)).findFirst().ifPresent(i -> players.set(i, new CustomPair<>(player, TRUE)));
+    }
+
 
     /**
      * When the player have no coins on the hand, the game will be over.
@@ -232,54 +251,99 @@ public class Logic implements ILogic {
         return false;  // Return false if no players meet the end game condition
     }
 
-    /**
-     * It will return the winner(max sum) and also all the player with the correspondent sum of coins
-     */
     @Override
     public CustomPair<Player, Integer> checkWinningPlayer() {
         if (players.isEmpty()) {
-            return null; // Return null or throw an exception if there are no players
+            return null; // Return null if there are no players to process
         }
 
-        Player playerWithSmallestSum = null;
-        int minSum = Integer.MAX_VALUE; // Initialize with the largest possible integer to ensure any sum is smaller
+        List<CustomPair<Player, Integer>> playersWithSumBelow21 = findPlayersWithSumBelowOrEqual21();
+        if (!playersWithSumBelow21.isEmpty()) {
+            return findPlayerClosestTo21();
+        } else {
+            return findPlayerWithHighestSum();
+        }
+    }
+
+    private CustomPair<Player, Integer> findPlayerWithHighestSum() {
+        Player playerWithMaxSum = null;
+        int maxSum = Integer.MIN_VALUE; // Initialize with the smallest possible integer to ensure any sum is larger
 
         for (CustomPair<Player, Boolean> playerPair : players) {
             Player player = playerPair.getKey();
-            int sumOfCoins = calculateSumOfCoinsOnSite(player);
-            sumOfCoins = sumOfCoins + calculateSumOfCoinsOnHand(player);
-            if (sumOfCoins < minSum) { // Check if the current player's sum is less than the min found so far
-                minSum = sumOfCoins;
-                playerWithSmallestSum = player;
+            int totalSum = getTotalCoinSumForPlayer(player); // Calculate total sum of coins
+            if (totalSum > maxSum) { // Check if the current player's sum is greater than the max found so far
+                maxSum = totalSum;
+                playerWithMaxSum = player;
             }
         }
 
-        return new CustomPair<>(playerWithSmallestSum, minSum); // Return the player with the smallest sum of coins on site
+        return new CustomPair<>(playerWithMaxSum, maxSum);
     }
 
     /**
-     * It will calculate the sum of the coins on the side.
+     * Calculates the sum of the coins on the player's field of won coins.
      */
-    private int calculateSumOfCoinsOnSite(Player player) {
-        List<Coin> coinsOnSite = player.getFieldOfWonCoins();
-        int sumOfCoins = 0;
-        for (Coin coin : coinsOnSite) {
-            sumOfCoins = sumOfCoins + coin.getNumber();
+    private int calculateSumOfCoinsOnField(Player player) {
+        List<Coin> coinsOnField = player.getFieldOfWonCoins();
+        int totalSum = 0;
+        for (Coin coin : coinsOnField) {
+            totalSum += coin.getNumber();
         }
-        return sumOfCoins;
+        return totalSum;
+    }
+
+    @Override
+    public List<CustomPair<Player, Integer>> calculateTotalCoinSumsForPlayers() {
+        List<CustomPair<Player, Integer>> totalSumForPlayers = new ArrayList<>();
+
+        for (CustomPair<Player, Boolean> playerPair : players) {
+            Player player = playerPair.getKey();
+            int totalSum = getTotalCoinSumForPlayer(player);
+            totalSumForPlayers.add(new CustomPair<>(player, totalSum));
+        }
+        return totalSumForPlayers;
+    }
+
+    private int getTotalCoinSumForPlayer(Player player) {
+        return calculateSumOfCoinsOnField(player) + calculateSumOfCoinsInHand(player);
     }
 
     /**
-     * It will calculate the sum of the coins on the hand.
+     * Calculates the sum of the coins in the player's hand.
      */
-    private int calculateSumOfCoinsOnHand(Player player) {
-        List<Coin> coinsOnHand = player.getCoinsOnHand();
-        int sumOfCoins = 0;
-        for (Coin coin : coinsOnHand) {
-            sumOfCoins = sumOfCoins + coin.getNumber();
+    private int calculateSumOfCoinsInHand(Player player) {
+        List<Coin> coinsInHand = player.getCoinsOnHand();
+        int totalSum = 0;
+        for (Coin coin : coinsInHand) {
+            totalSum += coin.getNumber();
         }
-        return sumOfCoins;
+        return totalSum;
     }
+
+    private List<CustomPair<Player, Integer>> findPlayersWithSumBelowOrEqual21() {
+        List<CustomPair<Player, Integer>> result = new ArrayList<>();
+
+        for (CustomPair<Player, Boolean> playerPair : players) {
+            Player player = playerPair.getKey();
+            int totalSum = getTotalCoinSumForPlayer(player);
+
+            if (totalSum <= 21) {
+                result.add(new CustomPair<>(player, totalSum));
+            }
+        }
+
+        return result;
+    }
+
+    private CustomPair<Player, Integer> findPlayerClosestTo21() {
+        CustomPair<Player, Integer>   pairValue= players.stream()
+                .map(playerPair -> new CustomPair<>(playerPair.getKey(), getTotalCoinSumForPlayer(playerPair.getKey())))
+                .min(Comparator.comparingInt(pair -> Math.abs(pair.getValue() - 21)))
+                .orElse(null); // Return null if the list is empty
+        return pairValue;
+    }
+
 
     /**
      * It will return the round winner.
@@ -313,7 +377,7 @@ public class Logic implements ILogic {
     private void resetPlayerPlayedFlags() {
         for (int i = 0; i < players.size(); i++) {
             CustomPair<Player, Boolean> player = players.get(i);
-            CustomPair<Player, Boolean> newPlayer = new CustomPair<>(player.getKey(), false);
+            CustomPair<Player, Boolean> newPlayer = new CustomPair<>(player.getKey(), FALSE);
             players.set(i, newPlayer);
         }
     }
@@ -323,42 +387,43 @@ public class Logic implements ILogic {
      */
     @Override
     public Player getNextActivePlayer() {
-        Player roundWinner = round.getRoundWinner();
-        Player nextPlayer = null;
+        // Ermittle den Gewinner der Runde
+        Player roundWinner = (round != null) ? round.getRoundWinner() : null;
 
-        if (roundIndex > 0 && round != null && roundWinner != null) {
-            List<CustomPair<Player, Boolean>> playersRound = new ArrayList<>(players);
+        // Starte bei Spieler 0, wenn es keinen Gewinner gibt, oder bei dem Index des Gewinners
+        // Ermittle den Startindex: 0, wenn kein Gewinner vorhanden, oder den Index des Gewinners
+        int startIndex = (roundWinner == null) ? activePlayerIndex : IntStream.range(0, players.size()).filter(i -> players.get(i).getKey().getPlayerNumber() == roundWinner.getPlayerNumber()).findFirst().orElse(-1); // Fallback, falls der Gewinner nicht gefunden wird
 
-            if (activePlayerIndex < amountPlayers) {
-                activePlayerIndex = roundWinner.getPlayerNumber() + 1;
-                nextPlayer = playersRound.stream().filter(p -> p.getKey().getPlayerNumber() == activePlayerIndex && p.getValue().equals(FALSE))
-                        .map(CustomPair::getKey)
-                        .findFirst()
-                        .orElse(null);
-            } else {
-                activePlayerIndex = activePlayerIndex + 1;
-                nextPlayer = playersRound.stream().filter(p -> p.getKey().getPlayerNumber() == activePlayerIndex && p.getValue().equals(FALSE))
-                        .map(CustomPair::getKey)
-                        .findFirst()
-                        .orElse(null);
+        if (startIndex == -1) {
+            return null; // Gewinner nicht gefunden
+        }
+
+        // Suche nach dem nächsten inaktiven Spieler
+        int currentIndex = startIndex;
+        do {
+            CustomPair<Player, Boolean> currentPlayer = players.get(currentIndex);
+
+            // Wenn der Spieler inaktiv ist, markiere ihn als aktiv und gib ihn zurück
+            if (!currentPlayer.getValue()) {
+                activePlayerIndex = (currentIndex + 1) % players.size(); // Nächster Spieler als Startpunkt speichern
+                return currentPlayer.getKey();
             }
 
-        } else {
+            // Zum nächsten Spieler wechseln (zyklisch)
+            currentIndex = (currentIndex + 1) % players.size();
+        } while (currentIndex != startIndex);
 
-// Find the active player
-            nextPlayer = players.stream()
-                    .filter(pair -> pair.getKey().getPlayerNumber() == activePlayerIndex + 1)
-                    .map(CustomPair::getKey)
-                    .findFirst()
-                    .orElse(null);
-
-            activePlayerIndex++;
-        }
-
-        if (activePlayerIndex >= players.size()) {
-            activePlayerIndex = 0; // Explicitly reset to 0
-        }
-
-        return nextPlayer;
+        // Wenn kein inaktiver Spieler gefunden wurde, gib null zurück
+        return null;
     }
+
+    private boolean isCoinIDInUse(Player currentPlayer, Coin coin) {
+        return players.stream().filter(p -> !p.getKey().equals(currentPlayer)) // Exclude the current player
+                .flatMap(p -> Stream.concat(p.getKey().getCoinsOnHand().stream(), p.getKey().getFieldOfWonCoins().stream())).anyMatch(c -> c.getId() == coin.getId());
+    }
+
+    private boolean isCoinAlreadyWon(Coin coin) {
+        return players.stream().flatMap(p -> p.getKey().getFieldOfWonCoins().stream()).anyMatch(c -> c.getId() == coin.getId());
+    }
+
 }
