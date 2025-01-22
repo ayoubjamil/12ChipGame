@@ -337,10 +337,11 @@ public class Logic implements ILogic {
     }
 
     private CustomPair<Player, Integer> findPlayerClosestTo21() {
-        CustomPair<Player, Integer>   pairValue= players.stream()
+        CustomPair<Player, Integer> pairValue = players.stream()
                 .map(playerPair -> new CustomPair<>(playerPair.getKey(), getTotalCoinSumForPlayer(playerPair.getKey())))
+                .filter(pair -> pair.getValue() <= 21) // Only consider sums that are 21 or less
                 .min(Comparator.comparingInt(pair -> Math.abs(pair.getValue() - 21)))
-                .orElse(null); // Return null if the list is empty
+                .orElse(null); // Return null if no valid players are found
         return pairValue;
     }
 
