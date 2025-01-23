@@ -1,6 +1,5 @@
 package com.frauas.javaproject.twelvechipgame.temp;
 
-
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Coin;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Player;
 
@@ -23,7 +22,6 @@ public class Round {
     //put coin on table
     public void addPlayedCoins(CustomPair<Player, Coin> coinPair) {
         playedCoins.add(coinPair);
-
     }
 
     public List<CustomPair<Player, Coin>> getPlayedCoins() {
@@ -40,6 +38,6 @@ public class Round {
 
     //remove coin from table
     public void removePlayedCoins(Coin coinToRemove) {
-        playedCoins.removeIf(pair -> pair.getSecond().equals(coinToRemove));
+        playedCoins.removeIf(pair -> pair.getValue().equals(coinToRemove));
     }
 }
