@@ -102,10 +102,6 @@ public interface ILogic {
      * This could involve determining player order based on round wins, coin values, or other criteria.
      */
     Player getNextActivePlayer();
-    /**
-     * Resets the singleton instance.
-     */
-    void resetLogicInstance();
 
     /**
      * Returns the current round.
