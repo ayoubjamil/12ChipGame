@@ -86,7 +86,7 @@ public class Logic implements ILogic {
     }
 
     /**
-     * give to every players the own coins.
+     * give to every Player the own coins.
      */
     @Override
     public void distributeCoin() {
@@ -390,33 +390,33 @@ public class Logic implements ILogic {
      */
     @Override
     public Player getNextActivePlayer() {
-        // Ermittle den Gewinner der Runde
+        // Determine the winner of the round
         Player roundWinner = (round != null) ? round.getRoundWinner() : null;
 
-        // Starte bei Spieler 0, wenn es keinen Gewinner gibt, oder bei dem Index des Gewinners
-        // Ermittle den Startindex: 0, wenn kein Gewinner vorhanden, oder den Index des Gewinners
+        // Start at player 0 if there is no winner, or at the index of the winner
+        // Determine the start index: 0 if there is no winner, or the index of the winner
         int startIndex = (roundWinner == null) ? activePlayerIndex : IntStream.range(0, players.size()).filter(i -> players.get(i).getKey().getPlayerNumber() == roundWinner.getPlayerNumber()).findFirst().orElse(-1); // Fallback, falls der Gewinner nicht gefunden wird
 
         if (startIndex == -1) {
-            return null; // Gewinner nicht gefunden
+            return null; // Winner not found
         }
 
-        // Suche nach dem nächsten inaktiven Spieler
+        // Search for the next inactive player
         int currentIndex = startIndex;
         do {
             CustomPair<Player, Boolean> currentPlayer = players.get(currentIndex);
 
-            // Wenn der Spieler inaktiv ist, markiere ihn als aktiv und gib ihn zurück
+            // If the player is inactive, mark him as active and give him back
             if (!currentPlayer.getValue()) {
-                activePlayerIndex = (currentIndex + 1) % players.size(); // Nächster Spieler als Startpunkt speichern
+                activePlayerIndex = (currentIndex + 1) % players.size(); // Save next player as starting point
                 return currentPlayer.getKey();
             }
 
-            // Zum nächsten Spieler wechseln (zyklisch)
+            // Switch to the next player (cyclical)
             currentIndex = (currentIndex + 1) % players.size();
         } while (currentIndex != startIndex);
 
-        // Wenn kein inaktiver Spieler gefunden wurde, gib null zurück
+        // If no inactive player was found, return zero
         return null;
     }
 
