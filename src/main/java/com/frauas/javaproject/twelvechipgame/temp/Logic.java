@@ -36,7 +36,27 @@ public class Logic implements ILogic {
         }
         return instance;
     }
+    /**
+     * Static method to reset the singleton instance.
+     */
+    public static void resetInstance() {
+        instance = null;
+    }
 
+    /**
+     * Instance method to reset the singleton instance via the interface.
+     */
+    @Override
+    public void resetLogicInstance() {
+        resetInstance();
+    }
+    /**
+     * Returns the current round.
+     */
+    @Override
+    public Round getRound() {
+        return round;
+    }
     @Override
     public int getActualRoundNumber() {
         return roundIndex;
