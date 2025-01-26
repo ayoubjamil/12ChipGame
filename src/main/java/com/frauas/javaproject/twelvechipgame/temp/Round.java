@@ -33,6 +33,7 @@ public class Round {
     }
 
     public void setRoundWinner(Player roundWinner) {
+        System.out.println("Set round winner to Player #" + roundWinner.getPlayerNumber());
         this.roundWinner = roundWinner;
     }
 

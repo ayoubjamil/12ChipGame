@@ -63,12 +63,14 @@ public interface ILogic {
     /**
      * Facilitates a player's action of playing a coin.
      */
-    void playCoin(Player player, Coin coin);
+    boolean playCoin(Player player, Coin coin);
 
     /**
      * Assigns a chosen coin to either the winning player's pile of won coins or returns it to their hand.
+     *
+     * @return
      */
-    void chooseCoinToSiteToHand(Player player, Coin coin);
+    Coin chooseCoinToSiteToHand(Player player, Coin coin);
 
     /**
      * Evaluates whether the conditions to end the game have been met.
@@ -101,5 +103,7 @@ public interface ILogic {
      * Retrieves the next active player based on the game's rules for player rotation.
      * This could involve determining player order based on round wins, coin values, or other criteria.
      */
-    Player getNextActivePlayer();
+    Player getNextActivePlayer(Player player);
+
+
 }

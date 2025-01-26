@@ -37,6 +37,30 @@ public class Logic implements ILogic {
         return instance;
     }
 
+    public void resetLogic() {
+        players.clear();
+        amountPlayers = 0;
+        round = null;
+        roundIndex = 0;
+        activePlayerIndex = 0;
+        isHardMode = false;
+
+    }
+    public static void resetInstance() {
+
+
+
+        instance = null;
+    }
+
+    /*public Round getRound() {
+        return this.round;
+    }*/
+
+    public Round getRound() {
+        return round;
+    }
+
     @Override
     public int getActualRoundNumber() {
         return roundIndex;
@@ -64,6 +88,11 @@ public class Logic implements ILogic {
         for (int i = 1; i < amountPlayers; i++) {
             players.add(new CustomPair<Player, Boolean>(new NPC(i + 1, isHardMode), FALSE));
         }
+        players = players.reversed();
+
+        Random random = new Random();
+        activePlayerIndex = random.nextInt(amountPlayers);
+
     }
 
     /**
@@ -92,6 +121,7 @@ public class Logic implements ILogic {
     public void distributeCoin() {
         // Collect a specific number of red and blue coins based on player requirements
         List<Coin> redCoins = coins.stream().filter(c -> c.getColor() == coinColors.RED).collect(Collectors.toList());
+
         List<Coin> blueCoins = coins.stream().filter(c -> c.getColor() == coinColors.BLUE).collect(Collectors.toList());
 
         for (CustomPair<Player, Boolean> player : players) {
@@ -146,20 +176,24 @@ public class Logic implements ILogic {
 
     // The coin will be played
     @Override
-    public void playCoin(Player player, Coin coin) {
+    public boolean  playCoin(Player player, Coin coin) {
         try {
             if (player instanceof NPC) {
                 handleNPCPlayer((NPC) player);
+                return true;
             } else {
                 handleRegularPlayer(player, coin);
+                return false;
             }
         } catch (IllegalStateException | IllegalArgumentException ex) {
             System.out.println("Error: " + ex.getMessage());
         }
+        return false;
     }
 
     private void handleNPCPlayer(NPC npc) {
         Coin playedCoin = npc.playCoin();
+
         validateAndRecordCoin(npc, playedCoin);
         npc.playCoinByValue(playedCoin.getNumber());
         System.out.println(">>>  " + "NPC player " + npc.getPlayerNumber() + " plays " + playedCoin);
@@ -173,11 +207,11 @@ public class Logic implements ILogic {
 
     }
 
-    private int findCoinIndex(List<Coin> coinsOnHand, Coin coin) {
+    public int findCoinIndex(List<Coin> coinsOnHand, Coin coin) {
         return IntStream.range(0, coinsOnHand.size()).filter(i -> coinsOnHand.get(i).getId() == coin.getId()).findFirst().orElseThrow(() -> new IllegalArgumentException("Coin not found in hand!"));
     }
 
-    private void validateAndRecordCoin(Player player, Coin coin) {
+    public void validateAndRecordCoin(Player player, Coin coin) {
         if (isCoinIDInUse(player, coin)) {
             throw new IllegalStateException("Coin is already in use.");
         }
@@ -191,9 +225,11 @@ public class Logic implements ILogic {
     /**
      * It will sort the coin on the table, for the winner will be placed on fieldOfWonCoins and for the losers will be taked on the hand.
      * When the player made the choise, will be set inactive.
+     *
+     * @return
      */
     @Override
-    public void chooseCoinToSiteToHand(Player player, Coin coin) {
+    public Coin chooseCoinToSiteToHand(Player player, Coin coin) {
         try {
             Coin chosenCoin = coin;
             if (player instanceof NPC) {
@@ -203,10 +239,11 @@ public class Logic implements ILogic {
 
             processChosenCoin(player, chosenCoin);
             markPlayerActive(player);
-
+            return chosenCoin;
         } catch (IllegalStateException | IllegalArgumentException ex) {
             System.out.println("Error: " + ex.getMessage());  // Consider replacing with proper logging
         }
+        return coin;
     }
 
     private void processChosenCoin(Player player, Coin coin) {
@@ -389,15 +426,17 @@ public class Logic implements ILogic {
      * It will return the next active player.
      */
     @Override
-    public Player getNextActivePlayer() {
+    public Player getNextActivePlayer(Player player) {
         // Ermittle den Gewinner der Runde
-        Player roundWinner = (round != null) ? round.getRoundWinner() : null;
+        Player roundWinner = (round != null) ? player : null;
+        System.out.println("============== roundWinner " + roundWinner);
 
         // Starte bei Spieler 0, wenn es keinen Gewinner gibt, oder bei dem Index des Gewinners
         // Ermittle den Startindex: 0, wenn kein Gewinner vorhanden, oder den Index des Gewinners
         int startIndex = (roundWinner == null) ? activePlayerIndex : IntStream.range(0, players.size()).filter(i -> players.get(i).getKey().getPlayerNumber() == roundWinner.getPlayerNumber()).findFirst().orElse(-1); // Fallback, falls der Gewinner nicht gefunden wird
 
         if (startIndex == -1) {
+            System.out.println("==============" + "NULL");
             return null; // Gewinner nicht gefunden
         }
 
@@ -409,7 +448,9 @@ public class Logic implements ILogic {
             // Wenn der Spieler inaktiv ist, markiere ihn als aktiv und gib ihn zurück
             if (!currentPlayer.getValue()) {
                 activePlayerIndex = (currentIndex + 1) % players.size(); // Nächster Spieler als Startpunkt speichern
+                System.out.println("==============" + "return getNextActivePlayer " + currentPlayer.getKey());
                 return currentPlayer.getKey();
+                //return players.get(activePlayerIndex).getKey();
             }
 
             // Zum nächsten Spieler wechseln (zyklisch)

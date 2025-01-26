@@ -1,6 +1,5 @@
 package com.frauas.javaproject.twelvechipgame.controller;
 
-import com.frauas.javaproject.twelvechipgame.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
