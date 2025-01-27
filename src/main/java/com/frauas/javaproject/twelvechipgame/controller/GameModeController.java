@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 public class GameModeController {
 
@@ -130,7 +130,6 @@ public class GameModeController {
     public Button GameOverButton;
 
     // Needed to disable the anchorPane after game is over and enable after the GameOverButton is clicked
-    public AnchorPane anchorPane;
     public javafx.scene.layout.VBox vBox;
 
     // Window resolution
