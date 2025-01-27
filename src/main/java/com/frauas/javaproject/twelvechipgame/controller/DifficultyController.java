@@ -46,47 +46,46 @@ public class DifficultyController {
 
     public void onHardModeClicked(ActionEvent event) throws IOException {
 
-        //        gameMode.setThreePlayerMode(true);
+        // Sets the Stage
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        // Loads the game-mode FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/frauas/javaproject/twelvechipgame/game-mode.fxml"));
-//        Parent root = FXMLLoader.load(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
         Parent root = loader.load();
 
-
+        // Gets the GameModeController
         GameModeController gameModeController = loader.getController();
+
+        // Passes the numberOfPlayers the hard difficulty and window resolution to GameModeController
         gameModeController.initData(numberOfPlayers, true, resolutionXValue, resolutionYValue);
 
+        // Creates the GameMode window
         scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
-
 
     }
 
     public void onEasyModeClicked(ActionEvent event) throws IOException {
 
-        //        gameMode.setThreePlayerMode(true);
+        // Sets the Stage
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        // Loads the game-mode FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/frauas/javaproject/twelvechipgame/game-mode.fxml"));
-//        Parent root = FXMLLoader.load(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
         Parent root = loader.load();
 
-
+        // Gets the GameModeController
         GameModeController gameModeController = loader.getController();
+
+        // Passes the numberOfPlayers the easy difficulty and window resolution to GameModeController
         gameModeController.initData(numberOfPlayers, false, resolutionXValue, resolutionYValue);
 
+        // Creates the GameMode window
         scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
     }
-
-
-
-//    public void setGameModeChosen() {
-//        if (gameModeController.isThreePlayerMode()){
-////            gameModeChosen.appendText("\nChoose a three player mode\n");
-//        }
-//    }
 
 
 }

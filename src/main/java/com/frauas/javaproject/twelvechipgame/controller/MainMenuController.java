@@ -23,8 +23,6 @@ public class MainMenuController {
     private Button settingsButton;
     @FXML
     private Button exitButton;
-    @FXML
-    private TextArea debugField;
 
     int resolutionXValue = 1280;
     int resolutionYValue = 720;
@@ -32,58 +30,52 @@ public class MainMenuController {
 
     private Stage stage;
     private Scene scene;
-    private Parent root;
 
 
-
-    // Example: a small "game mode" logic holder
-    private final GameModeController gameMode = new GameModeController();
-
-    public static boolean isThreePlayer = false;
-
-    /**
-     * No-arg constructor.
-     * JavaFX automatically uses this to create the controller
-     * when loading the FXML (because of fx:controller).
-     */
     public MainMenuController() {
-        // Usually empty.
+
     }
 
+    // Switch to difficulty window
     @FXML
     public void onThreePlayerButtonClicked(ActionEvent event) throws IOException {
 
-//        gameMode.setThreePlayerMode(true);
+        // Sets the Stage
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        // Loads the choose-difficulty FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
-//        Parent root = FXMLLoader.load(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
         Parent root = loader.load();
 
-
+        // Gets the DifficultyController
         DifficultyController difficultyController = loader.getController();
+        // Passes the number of players (3 in this case) as well as the window resolution the Difficulty Window
         difficultyController.initData(3, resolutionXValue, resolutionYValue);
 
+        // Creates the Difficulty Window with the above set resolution
         scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
-
-
-
     }
+
 
     @FXML
     public void onFourPlayerButtonClicked(ActionEvent event) throws IOException {
 
-//        gameMode.setThreePlayerMode(true);
+        // Sets the Stage
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        // Loads the choose-difficulty FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
-//        Parent root = FXMLLoader.load(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
         Parent root = loader.load();
 
-
+        // Gets the DifficultyController
         DifficultyController difficultyController = loader.getController();
+
+        // Passes the number of players (4 in this case) as well as the window resolution the Difficulty Window
         difficultyController.initData(4, resolutionXValue, resolutionYValue);
 
+        // Creates the Difficulty Window with the above set resolution
         scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
@@ -92,43 +84,56 @@ public class MainMenuController {
 
     }
 
+    // Switches to the Settings Window
     public void switchToSettings(ActionEvent event) throws IOException {
+
+        // Sets the Stage
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        // Loads the settings FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/frauas/javaproject/twelvechipgame/settings.fxml"));
-//        Parent root = FXMLLoader.load(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
         Parent root = loader.load();
 
+        // Gets the SettingsController
         SettingsController settingsController = loader.getController();
+        // Passes the X Value for the resolution to the Setting Window
         settingsController.initData(resolutionXValue);
 
+        // Creates the Settings Window with the above set resolution
         scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
     }
 
+    // Switches to the Game Rules Window
     public void switchToGameRules(ActionEvent event) throws IOException {
+
+        // Sets the Stage
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        // Loads the game-rules FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/frauas/javaproject/twelvechipgame/game-rules.fxml"));
-//        Parent root = FXMLLoader.load(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
         Parent root = loader.load();
 
+        // Gets the GameRulesController
         GameRulesController gameRulesController = loader.getController();
         gameRulesController.initData(resolutionXValue, resolutionYValue);
 
+        // Creates the GameRules Window with the above set resolution
         scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
     }
 
-
-    public void exitProgram(ActionEvent event) throws IOException {
-        System.exit(0);
-    }
-
+    // Initializes the Main Menu with the received window resolution
     public void initData(int resolutionXValue, int resolutionYValue) {
             this.resolutionXValue = resolutionXValue;
             this.resolutionYValue = resolutionYValue;
     }
 
+    // exits the program to desktop
+    public void exitProgram(ActionEvent event) throws IOException {
+        System.exit(0);
+    }
 
 }

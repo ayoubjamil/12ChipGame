@@ -36,9 +36,12 @@ public class GameFinishedController {
     private int resolutionYValue;
 
     public void initData(int player1total, int player2total, int player3total, int player4total, int numberOfPlayers, int winnerOfGame, int resolutionXValue, int resolutionYValue) {
+
+        // Toggles the visibility for Player4 labels off
         player4Label.setVisible(false);
         player4SumOfCoins.setVisible(false);
 
+        // initializes corresponding variables and sets the text of the labels
         this.player1Total = player1total;
         player1SumOfCoins.setText(String.valueOf(player1total));
         this.player2Total = player2total;
@@ -46,6 +49,7 @@ public class GameFinishedController {
         this.player3Total = player3total;
         player3SumOFCoins.setText(String.valueOf(player3total));
 
+        // Toggles visibility of Player4 labels on and initializes and sets the text of the label corresponding to Player 4
         if (numberOfPlayers == 4){
             player4Label.setVisible(true);
             player4SumOfCoins.setVisible(true);
@@ -53,6 +57,7 @@ public class GameFinishedController {
             player4SumOfCoins.setText(String.valueOf(player4total));
         }
 
+        // initializes corresponding variables ands sets the corresponding label to the winner of the game
         this.winenrOfGame = winnerOfGame;
         this.gameWinner.setText(String.valueOf(winnerOfGame));
         this.numberOfPlayers = numberOfPlayers;
@@ -63,23 +68,22 @@ public class GameFinishedController {
 
     public void onReturnToMainMenuClicked(ActionEvent event) throws IOException {
 
-        //        gameMode.setThreePlayerMode(true);
+        // Sets the stage
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        // Loads the mein-menu FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/frauas/javaproject/twelvechipgame/main-menu.fxml"));
-//        Parent root = FXMLLoader.load(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
         Parent root = loader.load();
 
+        // Gets the MainMenuController
+        MainMenuController mainMenuController = loader.getController();
+        // Passes window resolution to the Main Menu window
+        mainMenuController.initData(resolutionXValue, resolutionYValue );
 
-       MainMenuController mainMenuController = loader.getController();
-       mainMenuController.initData(resolutionXValue, resolutionYValue );
-
+        // Creates the Main Menu window
         scene = new Scene(root, resolutionXValue, resolutionYValue);
         stage.setScene(scene);
         stage.show();
 
-
     }
-
-
-
 }
