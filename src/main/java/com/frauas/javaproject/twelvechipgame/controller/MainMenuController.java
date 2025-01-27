@@ -14,6 +14,7 @@ import java.io.IOException;
 
 public class MainMenuController {
 
+    public Button gameRulesButton;
     @FXML
     private Button threePlayerButton;
     @FXML
@@ -104,6 +105,21 @@ public class MainMenuController {
         stage.setScene(scene);
         stage.show();
     }
+
+    public void switchToGameRules(ActionEvent event) throws IOException {
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/frauas/javaproject/twelvechipgame/game-rules.fxml"));
+//        Parent root = FXMLLoader.load(getClass().getResource("/com/frauas/javaproject/twelvechipgame/choose-difficulty.fxml"));
+        Parent root = loader.load();
+
+        GameRulesController gameRulesController = loader.getController();
+        gameRulesController.initData(resolutionXValue, resolutionYValue);
+
+        scene = new Scene(root, resolutionXValue, resolutionYValue);
+        stage.setScene(scene);
+        stage.show();
+    }
+
 
     public void exitProgram(ActionEvent event) throws IOException {
         System.exit(0);

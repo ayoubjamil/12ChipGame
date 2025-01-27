@@ -17,6 +17,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -126,6 +128,8 @@ public class GameModeController {
     //change scene to Game Finished scene
     @FXML
     public Button GameOverButton;
+    public AnchorPane anchorPane;
+    public javafx.scene.layout.VBox vBox;
 
     //window resolution
     int resolutionXValue = 1280;
@@ -862,10 +866,11 @@ public class GameModeController {
                 //onGameOver();
 
                 CustomPair<Player, Integer> win = logic.checkWinningPlayer();
-               playerWhoWonTheGame = win.getKey().getPlayerNumber();
+                playerWhoWonTheGame = win.getKey().getPlayerNumber();
 
                 toggleVisibilityForAllPlayers(numberOfPlayers);
 
+                vBox.setDisable(true);
                 GameOverButton.setVisible(!GameOverButton.isVisible());
 
 
@@ -1084,6 +1089,7 @@ public class GameModeController {
 
             GameFinishedController gameFinishedController = loader.getController();
             gameFinishedController.initData(player1Total, player2Total, player3Total, player4Total, numberOfPlayers, playerWhoWonTheGame, resolutionXValue, resolutionYValue);
+            vBox.setDisable(false);
 
             logic.resetLogic();
             Logic.resetInstance();
