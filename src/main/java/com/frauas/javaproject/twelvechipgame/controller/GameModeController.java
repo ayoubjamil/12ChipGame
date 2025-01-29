@@ -3,10 +3,10 @@ package com.frauas.javaproject.twelvechipgame.controller;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Coin;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.NPC;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Player;
-import com.frauas.javaproject.twelvechipgame.temp.CustomPair;
-import com.frauas.javaproject.twelvechipgame.temp.Logic;
+import com.frauas.javaproject.twelvechipgame.GameLogic.CustomPair;
+import com.frauas.javaproject.twelvechipgame.GameLogic.Logic;
 
-import com.frauas.javaproject.twelvechipgame.temp.Round;
+import com.frauas.javaproject.twelvechipgame.GameLogic.Round;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +17,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
-import javafx.scene.layout.AnchorPane;
 
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -187,61 +186,66 @@ public class GameModeController {
 
     // Methods to toggle the Labels and Buttons of the Game Window
     public void toggleVisibilityForPlayer4() {
+
         Player4Label.setVisible(!Player4Label.isVisible());
-        Player4Coin1.setVisible(!Player4Coin1.isVisible());
-        Player4Coin2.setVisible(!Player4Coin2.isVisible());
-        Player4Coin3.setVisible(!Player4Coin3.isVisible());
-        Player4Coin4.setVisible(!Player4Coin4.isVisible());
-        Player4CoinTaken1.setVisible(!Player4CoinTaken1.isVisible());
-        Player4CoinTaken2.setVisible(!Player4CoinTaken2.isVisible());
-        Player4CoinTaken3.setVisible(!Player4CoinTaken3.isVisible());
-        Player4CoinTaken4.setVisible(!Player4CoinTaken4.isVisible());
+
+        for (Label handLabel : coinsOnHandPlayer4) {
+            handLabel.setVisible(!handLabel.isVisible());
+        }
+        for (Label takenLabel : coinsTakenPlayer4) {
+            takenLabel.setVisible(!takenLabel.isVisible());
+        }
+
     }
 
     public void toggleVisibilityForPlayer1() {
+
         Player1Label.setVisible(!Player1Label.isVisible());
-        Player1Coin1.setVisible(!Player1Coin1.isVisible());
-        Player1Coin2.setVisible(!Player1Coin2.isVisible());
-        Player1Coin3.setVisible(!Player1Coin3.isVisible());
-        Player1Coin4.setVisible(!Player1Coin4.isVisible());
-        Player1CoinTaken1.setVisible(!Player1CoinTaken1.isVisible());
-        Player1CoinTaken2.setVisible(!Player1CoinTaken2.isVisible());
-        Player1CoinTaken3.setVisible(!Player1CoinTaken3.isVisible());
-        Player1CoinTaken4.setVisible(!Player1CoinTaken4.isVisible());
+
+        for (Button handButton : coinsOnHandPlayer1) {
+            handButton.setVisible(!handButton.isVisible());
+        }
+        for (Label takenLabel : coinsTakenPlayer1) {
+            takenLabel.setVisible(!takenLabel.isVisible());
+        }
+
     }
 
     public void toggleVisibilityForPlayer2() {
+
         Player2Label.setVisible(!Player2Label.isVisible());
-        Player2Coin1.setVisible(!Player2Coin1.isVisible());
-        Player2Coin2.setVisible(!Player2Coin2.isVisible());
-        Player2Coin3.setVisible(!Player2Coin3.isVisible());
-        Player2Coin4.setVisible(!Player2Coin4.isVisible());
-        Player2CoinTaken1.setVisible(!Player2CoinTaken1.isVisible());
-        Player2CoinTaken2.setVisible(!Player2CoinTaken2.isVisible());
-        Player2CoinTaken3.setVisible(!Player2CoinTaken3.isVisible());
-        Player2CoinTaken4.setVisible(!Player2CoinTaken4.isVisible());
+
+        for (Label handLabel : coinsOnHandPlayer2) {
+            handLabel.setVisible(!handLabel.isVisible());
+        }
+        for (Label takenLabel : coinsTakenPlayer2) {
+            takenLabel.setVisible(!takenLabel.isVisible());
+        }
+
     }
 
     public void toggleVisibilityForPlayer3() {
+
         Player3Label.setVisible(!Player3Label.isVisible());
-        Player3Coin1.setVisible(!Player3Coin1.isVisible());
-        Player3Coin2.setVisible(!Player3Coin2.isVisible());
-        Player3Coin3.setVisible(!Player3Coin3.isVisible());
-        Player3Coin4.setVisible(!Player3Coin4.isVisible());
-        Player3CoinTaken1.setVisible(!Player3CoinTaken1.isVisible());
-        Player3CoinTaken2.setVisible(!Player3CoinTaken2.isVisible());
-        Player3CoinTaken3.setVisible(!Player3CoinTaken3.isVisible());
-        Player3CoinTaken4.setVisible(!Player3CoinTaken4.isVisible());
+
+        for (Label handLabel : coinsOnHandPlayer3) {
+            handLabel.setVisible(!handLabel.isVisible());
+        }
+        for (Label takenLabel : coinsTakenPlayer3) {
+            takenLabel.setVisible(!takenLabel.isVisible());
+        }
+
     }
 
     public void toggleVisibilityForFieldButtons() {
-        FieldButton1.setVisible(!FieldButton1.isVisible());
-        FieldButton2.setVisible(!FieldButton2.isVisible());
-        FieldButton3.setVisible(!FieldButton3.isVisible());
-        FieldButton4.setVisible(!FieldButton4.isVisible());
+
+        for (Button fieldButton : coinsToChooseFromField) {
+            fieldButton.setVisible(!fieldButton.isVisible());
+        }
+
     }
 
-    public void toggleVisibilityForAllPlayers(int numberOfPlayers) {
+    public void toggleVisibilityForAllPlayersAndFieldButtons(int numberOfPlayers) {
         if (numberOfPlayers == 3) {
             toggleVisibilityForPlayer1();
             toggleVisibilityForPlayer2();
@@ -260,18 +264,16 @@ public class GameModeController {
 
     // Methods for updating corresponding UI
     public void updateHands(Player player, Coin coin) {
+
         String color = coin.getColor().toString();
 
         // For the Player1 change the text to the Coin Number and the text color to the Coin Color
         // For the NPC change the text to the coin number and set the Label text color and label background color to the Coin color
-        //
-
         if (player.getPlayerNumber() == 1) {
 
             if (Player1Coin1.getText().isEmpty()) {
                 Player1Coin1.setText(Integer.toString(coin.getNumber()));
                 Player1Coin1.setStyle(String.format("-fx-text-fill: %s;", color));
-
             } else if (Player1Coin2.getText().isEmpty()) {
                 Player1Coin2.setText(Integer.toString(coin.getNumber()));
                 Player1Coin2.setStyle(String.format("-fx-text-fill: %s;", color));
@@ -283,8 +285,9 @@ public class GameModeController {
                 Player1Coin4.setStyle(String.format("-fx-text-fill: %s;", color));
             }
 
-
         } else if (player.getPlayerNumber() == 2) {
+
+
             if (Player2Coin1.getText().isEmpty()) {
                 Player2Coin1.setText(Integer.toString(coin.getNumber()));
                 Player2Coin1.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
@@ -490,9 +493,11 @@ public class GameModeController {
     // This method mediates between the Logic Class and the Game UI
     private void handleNPCPlayer(NPC npc) {
         // Get the Coin the NPC chose to play from hand
-        Coin playedCoin = npc.playCoin();
+        /*Coin playedCoin = npc.playCoin();
         logic.validateAndRecordCoin(npc, playedCoin);
-        npc.playCoinByValue(playedCoin.getNumber());
+        npc.playCoinByValue(playedCoin.getNumber());*/
+
+        Coin playedCoin = logic.playCoinForNPC(npc);
 
 
         // update the Game UI
@@ -526,12 +531,15 @@ public class GameModeController {
             button.setOnAction(event -> {
                 int clickedValue = Integer.parseInt(button.getText());
                 // Find that coin in player's hand
+
                 for (int i = 0; i < player.getCoinsOnHand().size(); i++) {
                     if (player.getCoinsOnHand().get(i).getNumber() == clickedValue) {
                         // Handle the logic side of things
                         Coin coinToPlay = player.getCoinsOnHand().get(i);
-                        logic.validateAndRecordCoin(player, coinToPlay);
-                        player.playCoin(i);
+                        /*logic.validateAndRecordCoin(player, coinToPlay);
+                        player.playCoin(i);*/
+
+                        logic.playCoinForPlayer(player, coinToPlay);
 
                         // Update the UI
                         updateHandOnPlay(player, coinToPlay);
@@ -746,7 +754,7 @@ public class GameModeController {
                 playerWhoWonTheGame = win.getKey().getPlayerNumber();
 
                 // Turns visibility of UI elements off and disables them
-                toggleVisibilityForAllPlayers(numberOfPlayers);
+                toggleVisibilityForAllPlayersAndFieldButtons(numberOfPlayers);
                 vBox.setDisable(true);
 
                 // Turns visibility of Game Over Button on
@@ -770,6 +778,8 @@ public class GameModeController {
             case 4 -> getPlayerByPlayerNumber(3);
             default -> null;
         };
+
+//        Player activePlayer = logic.getNextActivePlayer(null);
 
         // Lets an NPC player pick a Coin from the field
         if (activePlayer.getPlayerNumber() != 1) {

@@ -1,4 +1,4 @@
-package com.frauas.javaproject.twelvechipgame.temp;
+package com.frauas.javaproject.twelvechipgame.GameLogic;
 
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Coin;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Player;

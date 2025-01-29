@@ -1,4 +1,4 @@
-package com.frauas.javaproject.twelvechipgame.temp;
+package com.frauas.javaproject.twelvechipgame.GameLogic;
 
 public class CustomPair<F, S> {
     public final F key;

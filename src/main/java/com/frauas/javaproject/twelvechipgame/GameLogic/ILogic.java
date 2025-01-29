@@ -1,5 +1,6 @@
-package com.frauas.javaproject.twelvechipgame.temp;
+package com.frauas.javaproject.twelvechipgame.GameLogic;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Coin;
+import com.frauas.javaproject.twelvechipgame.gamecomponets.NPC;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Player;
 
 import java.util.List;
@@ -63,7 +64,9 @@ public interface ILogic {
     /**
      * Facilitates a player's action of playing a coin.
      */
-    boolean playCoin(Player player, Coin coin);
+    //boolean playCoin(Player player, Coin coin);
+    boolean playCoinForPlayer(Player player, Coin coin);
+    Coin playCoinForNPC(NPC npc);
 
     /**
      * Assigns a chosen coin to either the winning player's pile of won coins or returns it to their hand.
