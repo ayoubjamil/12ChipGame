@@ -1,4 +1,4 @@
-package com.frauas.javaproject.twelvechipgame.GameLogic;
+package com.frauas.javaproject.twelvechipgame.gamelogic;
 
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Coin;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.NPC;

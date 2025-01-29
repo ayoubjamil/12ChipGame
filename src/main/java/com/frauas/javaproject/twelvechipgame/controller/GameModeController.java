@@ -3,10 +3,10 @@ package com.frauas.javaproject.twelvechipgame.controller;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Coin;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.NPC;
 import com.frauas.javaproject.twelvechipgame.gamecomponets.Player;
-import com.frauas.javaproject.twelvechipgame.GameLogic.CustomPair;
-import com.frauas.javaproject.twelvechipgame.GameLogic.Logic;
+import com.frauas.javaproject.twelvechipgame.gamelogic.CustomPair;
+import com.frauas.javaproject.twelvechipgame.gamelogic.Logic;
 
-import com.frauas.javaproject.twelvechipgame.GameLogic.Round;
+import com.frauas.javaproject.twelvechipgame.gamelogic.Round;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -184,8 +184,77 @@ public class GameModeController {
     Player roundWinner = null;
 
 
-    // Methods to toggle the Labels and Buttons of the Game Window
-    public void toggleVisibilityForPlayer4() {
+
+    // initializing data received from previous windows and play game logic
+    public void initData(int numberOfPlayers, boolean difficulty, int resolutionXValue, int resolutionYValue) throws IOException {
+        // data received from previous windows
+        this.numberOfPlayers = numberOfPlayers;
+
+        this.resolutionXValue = resolutionXValue;
+        this.resolutionYValue = resolutionYValue;
+
+        // Responsible to track how many player still need to play a coin from hand
+        turnsLeftInRound = numberOfPlayers;
+
+        // initializing Lists for the corresponding Coin spots
+        // Player1 coins in hand
+        coinsOnHandPlayer1 = Arrays.asList(Player1Coin1, Player1Coin2, Player1Coin3, Player1Coin4);
+        coinsOnHandPlayer2 = Arrays.asList(Player2Coin1, Player2Coin2, Player2Coin3, Player2Coin4);
+        coinsOnHandPlayer3 = Arrays.asList(Player3Coin1, Player3Coin2, Player3Coin3, Player3Coin4);
+        coinsOnHandPlayer4 = Arrays.asList(Player4Coin1, Player4Coin2, Player4Coin3, Player4Coin4);
+
+        // Players Lists of coins Taken (moved to FieldOfWonCoins)
+        coinsTakenPlayer1 = Arrays.asList(Player1CoinTaken1, Player1CoinTaken2, Player1CoinTaken3, Player1CoinTaken4);
+        coinsTakenPlayer2 = Arrays.asList(Player2CoinTaken1, Player2CoinTaken2, Player2CoinTaken3, Player2CoinTaken4) ;
+        coinsTakenPlayer3  = Arrays.asList(Player3CoinTaken1, Player3CoinTaken2, Player3CoinTaken3, Player3CoinTaken4);
+        coinsTakenPlayer4  = Arrays.asList(Player4CoinTaken1, Player4CoinTaken2, Player4CoinTaken3, Player4CoinTaken4);
+
+        // Coins on the field, available to choose from
+        coinsToChooseFromField  = Arrays.asList(FieldButton1, FieldButton2, FieldButton3, FieldButton4);
+
+        // Disable all Buttons
+        for (Button button : coinsToChooseFromField) {
+            button.setDisable(true);
+        }
+
+        for (Button button : coinsOnHandPlayer1) {
+            button.setDisable(true);
+        }
+
+
+        // turn off visibility of GameOverButton at the beginning of the game
+        GameOverButton.setVisible(!GameOverButton.isVisible());
+
+        // toggle visibility of player 4 off if only 3 players are playing
+        if (numberOfPlayers == 3) {
+            toggleVisibilityForPlayer4();
+        }
+
+
+        // Initialize the Logic
+        logic.setHardMode(difficulty);
+        logic.setAmountPlayers(numberOfPlayers);
+
+        logic.createPlayers();
+        logic.createCoins();
+
+        logic.distributeCoin();
+
+        // Update starting hand
+        initializeStartingHand();
+
+        // Start the first Round
+        logic.startNextRound();//init first round
+        nextTurn();
+
+
+    }
+
+
+
+    //--------------- Methods to toggle the Labels and Buttons of the Game Window -------------------
+
+    private void toggleVisibilityForPlayer4() {
 
         Player4Label.setVisible(!Player4Label.isVisible());
 
@@ -198,7 +267,7 @@ public class GameModeController {
 
     }
 
-    public void toggleVisibilityForPlayer1() {
+    private void toggleVisibilityForPlayer1() {
 
         Player1Label.setVisible(!Player1Label.isVisible());
 
@@ -211,7 +280,7 @@ public class GameModeController {
 
     }
 
-    public void toggleVisibilityForPlayer2() {
+    private void toggleVisibilityForPlayer2() {
 
         Player2Label.setVisible(!Player2Label.isVisible());
 
@@ -224,7 +293,7 @@ public class GameModeController {
 
     }
 
-    public void toggleVisibilityForPlayer3() {
+    private void toggleVisibilityForPlayer3() {
 
         Player3Label.setVisible(!Player3Label.isVisible());
 
@@ -237,7 +306,7 @@ public class GameModeController {
 
     }
 
-    public void toggleVisibilityForFieldButtons() {
+    private void toggleVisibilityForFieldButtons() {
 
         for (Button fieldButton : coinsToChooseFromField) {
             fieldButton.setVisible(!fieldButton.isVisible());
@@ -245,7 +314,7 @@ public class GameModeController {
 
     }
 
-    public void toggleVisibilityForAllPlayersAndFieldButtons(int numberOfPlayers) {
+    private void toggleVisibilityForAllPlayersAndFieldButtons(int numberOfPlayers) {
         if (numberOfPlayers == 3) {
             toggleVisibilityForPlayer1();
             toggleVisibilityForPlayer2();
@@ -262,101 +331,59 @@ public class GameModeController {
     }
 
 
-    // Methods for updating corresponding UI
-    public void updateHands(Player player, Coin coin) {
+
+    //------------ Methods to initialize the corresponding UI elements with coins -------------
+
+    // update the UI with the coins the players have at the beginning of the game
+    private void initializeStartingHand() {
+
+        for (int i = 0; i < numberOfPlayers; i++) {
+            for (int j = 0; j < 4; j++) {
+                initializeStartingHandHelper(logic.getPlayers().get(i), logic.getPlayers().get(i).getCoinsOnHand().get(j));
+            }
+        }
+    }
+
+    // Helper method to initialize the starting hands
+    private void initializeStartingHandHelper(Player player, Coin coin) {
 
         String color = coin.getColor().toString();
 
-        // For the Player1 change the text to the Coin Number and the text color to the Coin Color
-        // For the NPC change the text to the coin number and set the Label text color and label background color to the Coin color
-        if (player.getPlayerNumber() == 1) {
-
-            if (Player1Coin1.getText().isEmpty()) {
-                Player1Coin1.setText(Integer.toString(coin.getNumber()));
-                Player1Coin1.setStyle(String.format("-fx-text-fill: %s;", color));
-            } else if (Player1Coin2.getText().isEmpty()) {
-                Player1Coin2.setText(Integer.toString(coin.getNumber()));
-                Player1Coin2.setStyle(String.format("-fx-text-fill: %s;", color));
-            } else if (Player1Coin3.getText().isEmpty()) {
-                Player1Coin3.setText(Integer.toString(coin.getNumber()));
-                Player1Coin3.setStyle(String.format("-fx-text-fill: %s;", color));
-            } else if (Player1Coin4.getText().isEmpty()) {
-                Player1Coin4.setText(Integer.toString(coin.getNumber()));
-                Player1Coin4.setStyle(String.format("-fx-text-fill: %s;", color));
-            }
-
-        } else if (player.getPlayerNumber() == 2) {
-
-
-            if (Player2Coin1.getText().isEmpty()) {
-                Player2Coin1.setText(Integer.toString(coin.getNumber()));
-                Player2Coin1.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-
-            } else if (Player2Coin2.getText().isEmpty()) {
-                Player2Coin2.setText(Integer.toString(coin.getNumber()));
-                Player2Coin2.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-
-            } else if (Player2Coin3.getText().isEmpty()) {
-                Player2Coin3.setText(Integer.toString(coin.getNumber()));
-                Player2Coin3.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-
-            } else if (Player2Coin4.getText().isEmpty()) {
-                Player2Coin4.setText(Integer.toString(coin.getNumber()));
-                Player2Coin4.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-
-            }
-
-        } else if (player.getPlayerNumber() == 3) {
-
-            if (Player3Coin1.getText().isEmpty()) {
-                Player3Coin1.setText(Integer.toString(coin.getNumber()));
-                Player3Coin1.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-            } else if (Player3Coin2.getText().isEmpty()) {
-                Player3Coin2.setText(Integer.toString(coin.getNumber()));
-                Player3Coin2.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-            } else if (Player3Coin3.getText().isEmpty()) {
-                Player3Coin3.setText(Integer.toString(coin.getNumber()));
-                Player3Coin3.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-            } else if (Player3Coin4.getText().isEmpty()) {
-                Player3Coin4.setText(Integer.toString(coin.getNumber()));
-                Player3Coin4.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-            }
-
-
-        } else if (player.getPlayerNumber() == 4) {
-
-            if (Player4Coin1.getText().isEmpty()) {
-                Player4Coin1.setText(Integer.toString(coin.getNumber()));
-                Player4Coin1.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-            } else if (Player4Coin2.getText().isEmpty()) {
-                Player4Coin2.setText(Integer.toString(coin.getNumber()));
-                Player4Coin2.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-            } else if (Player4Coin3.getText().isEmpty()) {
-                Player4Coin3.setText(Integer.toString(coin.getNumber()));
-                Player4Coin3.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-            } else if (Player4Coin4.getText().isEmpty()) {
-                Player4Coin4.setText(Integer.toString(coin.getNumber()));
-                Player4Coin4.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", color, color));
-            }
-
+        switch (player.getPlayerNumber()) {
+            case 1:
+                updateStartingHandsUI( coinsOnHandPlayer1, coin,"-fx-text-fill: " + color + ";");
+                break;
+            case 2:
+                updateStartingHandsUI(coinsOnHandPlayer2, coin,"-fx-text-fill: " + color + ";" + "-fx-background-color: " + color + ";");
+                break;
+            case 3:
+                updateStartingHandsUI(coinsOnHandPlayer3, coin,"-fx-text-fill: " + color + ";" + "-fx-background-color: " + color + ";");
+                break;
+            case 4:
+                updateStartingHandsUI(coinsOnHandPlayer4, coin,"-fx-text-fill: " + color + ";" + "-fx-background-color: " + color + ";");
+                break;
         }
     }
 
-    // Removes one Coin from the Hand UI by setting the button/ label to empty and resetting the background color after playing the Coin
-    public <T> void removeCoinFromHandUI(List<T> list, Coin coin) {
-        for (T item : list) {
-            if (item instanceof Labeled object) {
-                if (object.getText().equals(String.valueOf(coin.getNumber()))) {
-                    object.setStyle("");
-                    object.setText("");
-                    break;
-                }
+
+    // Initialize the starting hands
+    private <T extends Labeled> void updateStartingHandsUI(List<T> hand, Coin coin, String style ) {
+
+        for (var handSlot : hand) {
+
+            if (handSlot.getText().isEmpty()) {
+                handSlot.setText(Integer.toString(coin.getNumber()));
+                handSlot.setStyle(style);
+                return;
             }
         }
     }
+
+    // ------- Methods to Update the Game UI during Game Loop ---------
+
 
     // Calls removeCoinFromHandUI to update the corresponding Lists of Buttons/ Labels
-    public void updateHandOnPlay(Player player, Coin coin) {
+    private void updateHandOnPlay(Player player, Coin coin) {
         int playerNumber = player.getPlayerNumber();
 
         switch (playerNumber) {
@@ -372,42 +399,24 @@ public class GameModeController {
             case 4:
                 removeCoinFromHandUI(coinsOnHandPlayer4, coin);
                 break;
-
         }
     }
 
-    // Redraws the hand UI
-    public <T> void updateHandUI(List<T> hand, List<Coin> coins) {
 
-    // Draw an empty hand UI
-        for (T item : hand) {
-            if (item instanceof Labeled object) {
+    // Removes one Coin from the Hand UI by setting the button/ label to empty and resetting the background color after playing the Coin
+    private <T extends Labeled> void removeCoinFromHandUI(List<T> list, Coin coin) {
+        for (T object: list) {
+            if (object.getText().equals(String.valueOf(coin.getNumber()))) {
                 object.setStyle("");
                 object.setText("");
-            }
-        }
-        // Place the Coins onto the hand UI one by one
-        // for Labels
-        for (int i = 0; i < coins.size(); i++) {
-            if (hand.get(i) instanceof Label object) {
-                object.setText(Integer.toString(coins.get(i).getNumber()));
-                object.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", coins.get(i).getColor(), coins.get(i).getColor()));
-
-        // For Buttons
-            } else if (hand.get(i) instanceof Button object) {
-                object.setText(Integer.toString(coins.get(i).getNumber()));
-                object.setStyle(String.format(" -fx-text-fill: %s;", coins.get(i).getColor()));
+                break;
             }
         }
     }
 
-    // Clears the given played Coin from the field UI
-    public void clearFieldButton(Button button) {
-        button.setStyle("");
-        button.setText("");
-    }
 
-    public void updateCoinsTaken(Player player, Coin coin) {
+
+    private void updateCoinsTaken(Player player, Coin coin) {
         Button button = null;
 
         // Find the FieldButton corresponding to the passed coin
@@ -437,19 +446,40 @@ public class GameModeController {
                 clearFieldButton(button);
                 break;
         }
-
-
     }
 
-    // Update the given FieldButton UI to reflect the Coin that was placed on it
-    public void updateFieldButton(Button button, Coin coin) {
-
-        button.setText(Integer.toString(coin.getNumber()));
-        button.setStyle(String.format("-fx-text-fill: %s;", coin.getColor()));
+    // Clears the given played Coin from the field UI
+    private void clearFieldButton(Button button) {
+        button.setStyle("");
+        button.setText("");
     }
+
+    // Redraws the hand UI
+    private <T extends Labeled> void updateHandUI(List<T> hand, List<Coin> coins) {
+
+    // Draw an empty hand UI
+        for (T object : hand) {
+            object.setStyle("");
+            object.setText("");
+        }
+        // Place the Coins onto the hand UI one by one
+        // for Labels
+        for (int i = 0; i < coins.size(); i++) {
+            if (hand.get(i) instanceof Label object) {
+                object.setText(Integer.toString(coins.get(i).getNumber()));
+                object.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;", coins.get(i).getColor(), coins.get(i).getColor()));
+
+        // For Buttons
+            } else if (hand.get(i) instanceof Button object) {
+                object.setText(Integer.toString(coins.get(i).getNumber()));
+                object.setStyle(String.format(" -fx-text-fill: %s;", coins.get(i).getColor()));
+            }
+        }
+    }
+
 
     // Get the Coins played inside the Round Class to assign to the corresponding FieldButtons
-    public void updateCoinsOnPlayingField() {
+    private void updateCoinsOnPlayingField() {
 
         Round round = logic.getRound();
         for (CustomPair<Player, Coin> pair : round.getPlayedCoins()) {
@@ -473,29 +503,209 @@ public class GameModeController {
         }
     }
 
+    // Update the given FieldButton UI to reflect the Coin that was placed on it
+    private void updateFieldButton(Button button, Coin coin) {
 
-    // Method to initialize the corresponding UI elements with coins
-    // update the UI with the coins the players have at the beginning of the game
-    public void initializeStartingHand() {
+        button.setText(Integer.toString(coin.getNumber()));
+        button.setStyle(String.format("-fx-text-fill: %s;", coin.getColor()));
+    }
 
-        for (int i = 0; i < numberOfPlayers; i++) {
-            for (int j = 0; j < 4; j++) {
-                updateHands(logic.getPlayers().get(i), logic.getPlayers().get(i).getCoinsOnHand().get(j));
-                System.out.printf("Player: %d; Coin :%d\n", logic.getPlayers().get(i).getPlayerNumber(), logic.getPlayers().get(i).getCoinsOnHand().get(j).getNumber());
+
+    // Update won Coins
+    // Adds the given Coin to the corresponding won Coins area in the UI
+    private void updateWonCoins(List<Label> wonCoins, Coin coin) {
+        for (Label label : wonCoins) {
+            if (label.getText().isEmpty()) {
+                label.setText(String.valueOf(coin.getNumber()));
+                label.setStyle(String.format("-fx-text-fill: %s;", coin.getColor()));
+                break;
             }
         }
     }
 
 
-    // Methods to handle game flow
+    // ------------------------ Methods to handle game flow ----------------------------------
+
+
+
+    // Lets the next Player play Cooin from the hand
+    public void nextTurn() {
+
+        // Stops the recursion
+        if (turnsLeftInRound <= 0) {
+
+            // All Players have played a coin
+            endRoundAndCheckGameOver();
+            return;
+        }
+
+        Player activePlayer;
+
+        // Winner of the last round starts the first round
+        if (turnsLeftInRound == numberOfPlayers) {
+            activePlayer = logic.getNextActivePlayer(roundWinner);
+        }
+        // Every other turn is decided by the Logic Class (Clockwise)
+        else {
+            activePlayer = logic.getNextActivePlayer(null);
+        }
+
+        // Let NPC play Coin
+        if (activePlayer instanceof NPC) {
+            handleNPCPlayer((NPC) activePlayer);
+        } else {
+            // Let Player play Coin
+            handleRegularPlayer(activePlayer);
+        }
+    }
+
+
+
+    private void processWinnerOfRoundPlayer(Player player) {
+        List<Coin> coinsForChoose = logic.getCoinsForChoose();
+        if (!coinsForChoose.isEmpty()) {
+
+            // This gets called if the NPC has won the round
+            if (player.getPlayerNumber() != 1) {
+                Coin chosenCoin = logic.chooseCoinToSiteToHand(player, coinsForChoose.get(0));
+
+                // Update the corresponding UI
+                updateCoinsTaken(player, chosenCoin);
+
+                switch (player.getPlayerNumber()) {
+                    case 2: updateWonCoins(coinsTakenPlayer2, chosenCoin); break;
+                    case 3: updateWonCoins(coinsTakenPlayer3, chosenCoin); break;
+                    case 4: updateWonCoins(coinsTakenPlayer4, chosenCoin); break;
+                }
+
+                // Wait for PAUSE_BETWEEN_SECONDS seconds and let the next player takes their Coin from the field
+                PauseTransition pause = new PauseTransition(Duration.seconds(PAUSE_BETWEEN_MOVES));
+                pause.setOnFinished(e -> {
+                    processPlayers(player);
+                });
+                pause.play();
+            }
+
+            // This gets called if the Player has won the round
+            else if (player.getPlayerNumber() == 1) {
+                // Disable all buttons that can not be chosen
+                for (Button button : coinsToChooseFromField) {
+                    button.setOnAction(null);
+                    button.setDisable(true);
+                    for (Coin coin : coinsForChoose) {
+                        if (button.getText().equals(String.valueOf(coin.getNumber()))) {
+                            button.setDisable(false);
+                        }
+                    }
+                }
+
+                // Sets the Event Listener for the field buttons
+                for (Button button : coinsToChooseFromField) {
+                    button.setOnAction(event -> {
+                        if (!coinsForChoose.isEmpty()) {
+                            // Disables all buttons to prevent double-clicking
+                            for (Button button2 : coinsToChooseFromField) {
+                                button2.setDisable(true);
+                            }
+                            // Gets the clicked Coin
+                            Coin chosenCoin = null;
+                            for (Coin coin : coinsForChoose) {
+                                if (button.getText().equals(String.valueOf(coin.getNumber()))) {
+                                    chosenCoin = coin;
+                                    break;
+                                }
+                            }
+                            // Tells the Logic Class which coin was chosen
+                            logic.chooseCoinToSiteToHand(player, chosenCoin);
+
+                            // Updates the UI
+                            updateCoinsTaken(player, chosenCoin);
+                            updateWonCoins(coinsTakenPlayer1, chosenCoin);
+
+                            // Wait for PAUSE_BETWEEN_SECONDS seconds and let the next player take a Coin from the field
+                            PauseTransition pause = new PauseTransition(Duration.seconds(PAUSE_BETWEEN_MOVES));
+                            pause.setOnFinished(e -> {
+                                processPlayers(player);
+                            });
+                            pause.play();
+                        }
+
+                    });
+                }
+            }
+        }
+    }
+
+
+    // Handles the picking of Coins from the field for the players that have lost the round and checks for Game Over
+    private  void processPlayers(Player player) {
+        // Stops the recursion
+        if (processingPlayersLeftInRound <= 0) {
+
+            // On Game Over
+            if (logic.shouldEndGameBasedOnPlayerConditions()) {
+
+                // Get the winning Player
+                CustomPair<Player, Integer> win = logic.checkWinningPlayer();
+                playerWhoWonTheGame = win.getKey().getPlayerNumber();
+
+                // Turns visibility of UI elements off and disables them
+                toggleVisibilityForAllPlayersAndFieldButtons(numberOfPlayers);
+                vBox.setDisable(true);
+
+                // Turns visibility of Game Over Button on
+                GameOverButton.setVisible(!GameOverButton.isVisible());
+
+            } else {
+                // Start next round
+                turnsLeftInRound = numberOfPlayers;
+                logic.startNextRound();
+                nextTurn();
+            }
+
+            return;
+        }
+
+        // Gets the next active Player
+        Player activePlayer = switch (player.getPlayerNumber()) {
+            case 1 -> getPlayerByPlayerNumber(numberOfPlayers);
+            case 2 -> getPlayerByPlayerNumber(1);
+            case 3 -> getPlayerByPlayerNumber(2);
+            case 4 -> getPlayerByPlayerNumber(3);
+            default -> null;
+        };
+
+//        Player activePlayer = logic.getNextActivePlayer(null);
+
+        // Lets an NPC player pick a Coin from the field
+        if (activePlayer.getPlayerNumber() != 1) {
+            handleNPCFieldChoice((NPC) activePlayer);
+        }
+        // Lets a Player pick a Coin from the field
+        else if (activePlayer.getPlayerNumber() == 1) {
+            handleRegularPlayerFieldChoice(activePlayer);
+        }
+
+    }
+
+
+    // gets Player by their player number
+    private Player getPlayerByPlayerNumber(int playerNumber) {
+        for (Player player : logic.getPlayers()) {
+            if (player.getPlayerNumber() == playerNumber) {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
+
 
     // Lets the NPC play a coin from hand and updates the UI accordingly
     // This method mediates between the Logic Class and the Game UI
     private void handleNPCPlayer(NPC npc) {
-        // Get the Coin the NPC chose to play from hand
-        /*Coin playedCoin = npc.playCoin();
-        logic.validateAndRecordCoin(npc, playedCoin);
-        npc.playCoinByValue(playedCoin.getNumber());*/
+
 
         Coin playedCoin = logic.playCoinForNPC(npc);
 
@@ -536,8 +746,7 @@ public class GameModeController {
                     if (player.getCoinsOnHand().get(i).getNumber() == clickedValue) {
                         // Handle the logic side of things
                         Coin coinToPlay = player.getCoinsOnHand().get(i);
-                        /*logic.validateAndRecordCoin(player, coinToPlay);
-                        player.playCoin(i);*/
+
 
                         logic.playCoinForPlayer(player, coinToPlay);
 
@@ -642,253 +851,6 @@ public class GameModeController {
         }
     }
 
-    // Update won Coins
-    // Adds the given Coin to the corresponding won Coins area in the UI
-    private void updateWonCoins(List<Label> wonCoins, Coin coin) {
-        for (Label label : wonCoins) {
-            if (label.getText().isEmpty()) {
-                label.setText(String.valueOf(coin.getNumber()));
-                label.setStyle(String.format("-fx-text-fill: %s;", coin.getColor()));
-                break;
-            }
-        }
-    }
-
-
-    private void processWinnerOfRoundPlayer(Player player) {
-        List<Coin> coinsForChoose = logic.getCoinsForChoose();
-        if (!coinsForChoose.isEmpty()) {
-
-            // This gets called if the NPC has won the round
-            if (player.getPlayerNumber() != 1) {
-                Coin chosenCoin = logic.chooseCoinToSiteToHand(player, coinsForChoose.get(0));
-
-                // Update the corresponding UI
-                updateCoinsTaken(player, chosenCoin);
-
-                switch (player.getPlayerNumber()) {
-                    case 2: updateWonCoins(coinsTakenPlayer2, chosenCoin); break;
-                    case 3: updateWonCoins(coinsTakenPlayer3, chosenCoin); break;
-                    case 4: updateWonCoins(coinsTakenPlayer4, chosenCoin); break;
-                }
-
-                // Wait for PAUSE_BETWEEN_SECONDS seconds and let the next player takes their Coin from the field
-                PauseTransition pause = new PauseTransition(Duration.seconds(PAUSE_BETWEEN_MOVES));
-                pause.setOnFinished(e -> {
-                    processPlayers(player);
-                });
-                pause.play();
-            }
-
-            // This gets called if the Player has won the round
-            else if (player.getPlayerNumber() == 1) {
-                // Disable all buttons that can not be chosen
-                for (Button button : coinsToChooseFromField) {
-                    button.setOnAction(null);
-                    button.setDisable(true);
-                    for (Coin coin : coinsForChoose) {
-                        if (button.getText().equals(String.valueOf(coin.getNumber()))) {
-                            button.setDisable(false);
-                        }
-                    }
-                }
-
-                // Sets the Event Listener for the field buttons
-                for (Button button : coinsToChooseFromField) {
-                    button.setOnAction(event -> {
-                        if (!coinsForChoose.isEmpty()) {
-                            // Disables all buttons to prevent double-clicking
-                            for (Button button2 : coinsToChooseFromField) {
-                                button2.setDisable(true);
-                            }
-                            // Gets the clicked Coin
-                            Coin chosenCoin = null;
-                            for (Coin coin : coinsForChoose) {
-                                if (button.getText().equals(String.valueOf(coin.getNumber()))) {
-                                    chosenCoin = coin;
-                                    break;
-                                }
-                            }
-                            // Tells the Logic Class which coin was chosen
-                            logic.chooseCoinToSiteToHand(player, chosenCoin);
-
-                            // Updates the UI
-                            updateCoinsTaken(player, chosenCoin);
-                            updateWonCoins(coinsTakenPlayer1, chosenCoin);
-
-                            // Wait for PAUSE_BETWEEN_SECONDS seconds and let the next player take a Coin from the field
-                            PauseTransition pause = new PauseTransition(Duration.seconds(PAUSE_BETWEEN_MOVES));
-                            pause.setOnFinished(e -> {
-                                processPlayers(player);
-                            });
-                            pause.play();
-                        }
-
-                    });
-                }
-            }
-        }
-    }
-
-    // gets Player by their player number
-    private Player getPlayerByPlayerNumber(int playerNumber) {
-        for (Player player : logic.getPlayers()) {
-            if (player.getPlayerNumber() == playerNumber) {
-                return player;
-            }
-        }
-
-        return null;
-    }
-
-    // Handles the picking of Coins from the field for the players that have lost the round and checks for Game Over
-    private  void processPlayers(Player player) {
-       // Stops the recursion
-        if (processingPlayersLeftInRound <= 0) {
-
-            // On Game Over
-            if (logic.shouldEndGameBasedOnPlayerConditions()) {
-
-                // Get the winning Player
-                CustomPair<Player, Integer> win = logic.checkWinningPlayer();
-                playerWhoWonTheGame = win.getKey().getPlayerNumber();
-
-                // Turns visibility of UI elements off and disables them
-                toggleVisibilityForAllPlayersAndFieldButtons(numberOfPlayers);
-                vBox.setDisable(true);
-
-                // Turns visibility of Game Over Button on
-                GameOverButton.setVisible(!GameOverButton.isVisible());
-
-            } else {
-                // Start next round
-                turnsLeftInRound = numberOfPlayers;
-                logic.startNextRound();
-                nextTurn();
-            }
-
-           return;
-        }
-
-        // Gets the next active Player
-        Player activePlayer = switch (player.getPlayerNumber()) {
-            case 1 -> getPlayerByPlayerNumber(numberOfPlayers);
-            case 2 -> getPlayerByPlayerNumber(1);
-            case 3 -> getPlayerByPlayerNumber(2);
-            case 4 -> getPlayerByPlayerNumber(3);
-            default -> null;
-        };
-
-//        Player activePlayer = logic.getNextActivePlayer(null);
-
-        // Lets an NPC player pick a Coin from the field
-        if (activePlayer.getPlayerNumber() != 1) {
-            handleNPCFieldChoice((NPC) activePlayer);
-        }
-        // Lets a Player pick a Coin from the field
-        else if (activePlayer.getPlayerNumber() == 1) {
-            handleRegularPlayerFieldChoice(activePlayer);
-        }
-
-    }
-
-
-    // Lets the next Player play Cooin from the hand
-    public void nextTurn() {
-
-        // Stops the recursion
-        if (turnsLeftInRound <= 0) {
-
-            // All Players have played a coin
-            endRoundAndCheckGameOver();
-            return;
-        }
-
-        Player activePlayer;
-
-        // Winner of the last round starts the first round
-        if (turnsLeftInRound == numberOfPlayers) {
-            activePlayer = logic.getNextActivePlayer(roundWinner);
-        }
-        // Every other turn is decided by the Logic Class (Clockwise)
-        else {
-            activePlayer = logic.getNextActivePlayer(null);
-        }
-
-        // Let NPC play Coin
-        if (activePlayer instanceof NPC) {
-            handleNPCPlayer((NPC) activePlayer);
-        } else {
-        // Let Player play Coin
-            handleRegularPlayer(activePlayer);
-        }
-    }
-
-
-    // initializing data received from previous windows and play game logic
-    public void initData(int numberOfPlayers, boolean difficulty, int resolutionXValue, int resolutionYValue) throws IOException {
-        // data received from previous windows
-        this.numberOfPlayers = numberOfPlayers;
-
-        this.resolutionXValue = resolutionXValue;
-        this.resolutionYValue = resolutionYValue;
-
-        // Responsible to track how many player still need to play a coin from hand
-        turnsLeftInRound = numberOfPlayers;
-
-        // initializing Lists for the corresponding Coin spots
-        // Player1 coins in hand
-        coinsOnHandPlayer1 = Arrays.asList(Player1Coin1, Player1Coin2, Player1Coin3, Player1Coin4);
-        coinsOnHandPlayer2 = Arrays.asList(Player2Coin1, Player2Coin2, Player2Coin3, Player2Coin4);
-        coinsOnHandPlayer3 = Arrays.asList(Player3Coin1, Player3Coin2, Player3Coin3, Player3Coin4);
-        coinsOnHandPlayer4 = Arrays.asList(Player4Coin1, Player4Coin2, Player4Coin3, Player4Coin4);
-
-        // Players Lists of coins Taken (moved to FieldOfWonCoins)
-        coinsTakenPlayer1 = Arrays.asList(Player1CoinTaken1, Player1CoinTaken2, Player1CoinTaken3, Player1CoinTaken4);
-        coinsTakenPlayer2 = Arrays.asList(Player2CoinTaken1, Player2CoinTaken2, Player2CoinTaken3, Player2CoinTaken4) ;
-        coinsTakenPlayer3  = Arrays.asList(Player3CoinTaken1, Player3CoinTaken2, Player3CoinTaken3, Player3CoinTaken4);
-        coinsTakenPlayer4  = Arrays.asList(Player4CoinTaken1, Player4CoinTaken2, Player4CoinTaken3, Player4CoinTaken4);
-
-        // Coins on the field, available to choose from
-        coinsToChooseFromField  = Arrays.asList(FieldButton1, FieldButton2, FieldButton3, FieldButton4);
-
-        // Disable all Buttons
-        for (Button button : coinsToChooseFromField) {
-            button.setDisable(true);
-        }
-
-        for (Button button : coinsOnHandPlayer1) {
-            button.setDisable(true);
-        }
-
-
-        // turn off visibility of GameOverButton at the beginning of the game
-        GameOverButton.setVisible(!GameOverButton.isVisible());
-
-        // toggle visibility of player 4 off if only 3 players are playing
-        if (numberOfPlayers == 3) {
-            toggleVisibilityForPlayer4();
-        }
-
-
-        // Initialize the Logic
-        logic.setHardMode(difficulty);
-        logic.setAmountPlayers(numberOfPlayers);
-
-        logic.createPlayers();
-        logic.createCoins();
-
-        logic.distributeCoin();
-
-        // Update starting hand
-        initializeStartingHand();
-
-        // Start the first Round
-        logic.startNextRound();//init first round
-        nextTurn();
-
-
-    }
 
     private void endRoundAndCheckGameOver() {
         // Keeps track of how many players still need to choose a coin from the field
@@ -901,6 +863,9 @@ public class GameModeController {
 
 
     }
+
+
+    // ------------ Method to switch Game Finished window
 
     // Switch to the Finished Game window
     public void onGameOverSwitchToGameFinished(ActionEvent event) throws IOException {
