@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.frauas.javaproject.twelvechipgame.controller.SettingsController">
+   <children>
+      <VBox alignment="CENTER" layoutX="178.0" layoutY="46.0" prefHeight="297.0" prefWidth="227.0" spacing="20.0" AnchorPane.bottomAnchor="56.39999999999998" AnchorPane.leftAnchor="178.0" AnchorPane.rightAnchor="194.8" AnchorPane.topAnchor="46.0">
+         <children>
+            <Label text="Screen Resolution">
+               <font>
+                  <Font size="21.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </Label>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
+               <children>
+                  <RadioButton fx:id="hd" mnemonicParsing="false" onAction="#setResolution" selected="true" text="1280 x 720 ">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="resolution" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="fullHD" mnemonicParsing="false" onAction="#setResolution" text="1920 x 1080" toggleGroup="$resolution" />
+                  <RadioButton fx:id="quadHD" mnemonicParsing="false" onAction="#setResolution" text="2560 x 1440" toggleGroup="$resolution" />
+               </children>
+               <VBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </VBox.margin>
+            </VBox>
+            <Button mnemonicParsing="false" onAction="#switchToMainMenu" text="Return to Main Menu">
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin></Button>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="780.0" prefWidth="1270.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.frauas.javaproject.twelvechipgame.controller.GameRulesController">
+   <children>
+      <VBox alignment="TOP_CENTER" layoutX="143.0" prefHeight="780.0" prefWidth="940.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="143.0" AnchorPane.rightAnchor="187.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="Game Rules" textAlignment="CENTER">
+               <font>
+                  <Font size="25.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Label>
+            <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" prefHeight="688.0" prefWidth="1244.0" spacing="20.0">
+               <children>
+                  <TextArea editable="false" prefHeight="166.0" prefWidth="1209.0" text="Overview:&#10;- It is a strategic trick-taking game for three or four players.&#10;- It uses 12 chips for three players and 16 chips for four players, which are colored as follows:&#10;  - Blue Chips are numbered 1, 2, 3, 10, 11, 12.&#10;  - Red Chips are numbered 4, 5, 6, 7, 8, 9.&#10;  - Additional Chips for Four Players include Chip 3 (Blue), Chip 4 (Red), Chip 9 (Red), and Chip 10 (Blue).&#10;- The task is to win tricks in a strategic fashion, collecting chip values totalling up to 21 points and not exceeding it." wrapText="true" />
+                  <TextArea editable="false" prefHeight="102.0" prefWidth="1209.0" text="Setup:&#10;1. Players choose between three or four players.&#10;2. In the beginning, every player will be dealt 4 chips; thus, no chips will go undistributed.&#10;3. Players keep their chips hidden, that is, they must be placed face-down in front of every one of them." wrapText="true" />
+                  <TextArea editable="false" prefHeight="202.0" prefWidth="1221.0" text="Gameplay Mechanics:&#10;1. Players will take turns playing one chip per trick on the field.&#10;2. The player who plays the chip with the highest value wins the trick.&#10;3. Resolution of Tricks:&#10;   - The winner of the trick must choose a red chip if any are available out of the chips played on the field.&#10;   - If not available, the player must pick a blue chip instead.&#10;   - The chip picked is placed face-up in their score pile.&#10;   - Other players will take back a single played chip, putting it back face-down in their hands.&#10;" />
+                  <TextArea editable="false" prefHeight="134.0" prefWidth="1235.0" text="Scoring Rules:&#10;1. At the end of a round, players calculate the total sum of their coins. The sum is calculated from both the coins remaining on their hand as well as their score pile.&#10;2. The aim is to attempt to come as close as possible to a total sum of 21 but without going over 21.&#10;3. If only one player is below 21 then this player is the winner. If more than 1 player is below 21 then the player closest to 21 wins. &#10;4. If every player is above 21 then the player with the highest sum wins." />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+            <Button fx:id="returnToMainMenuFromGameRules" mnemonicParsing="false" onAction="#switchToMainMenu" prefHeight="25.0" prefWidth="149.0" text="Return to Main Menu">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin></Button>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>
