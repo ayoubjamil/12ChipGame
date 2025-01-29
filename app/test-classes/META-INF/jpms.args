@@ -1,4 +1,0 @@
---patch-module
-com.frauas.javaproject.javafx=_
---add-reads
-com.frauas.javaproject.javafx=ALL-UNNAMED
